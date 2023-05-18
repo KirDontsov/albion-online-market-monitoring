@@ -1,0 +1,13 @@
+.tableCellWrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+
+	& span:first-child {
+		font-weight: bold;
+	}
+
+	& span:last-child {
+		color: grey;
+	}
+}
