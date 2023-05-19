@@ -5,6 +5,7 @@ export const CITIES = [
   { label: "Бриджвоч", id: "Bridgewatch", value: "Bridgewatch" },
   { label: "Люмхорст", id: "Lymhurst", value: "Lymhurst" },
   { label: "Карлеон", id: "Caerleon", value: "Caerleon" },
+  { label: "Черный рынок", id: "BlackMarket", value: "Black Market" },
 ];
 
 export const RESOURCES = [
@@ -244,6 +245,11 @@ export const ITEMS = [
     label: "Расписанный камень (знаток)",
   },
   {
+    id: "T4_ARTEFACT_TOKEN_FAVOR_3",
+    value: "T4_ARTEFACT_TOKEN_FAVOR_3",
+    label: "Кристаллизованная магия (знаток)",
+  },
+  {
     id: "T4_OFF_DEMONSKULL_HELL",
     value: "T4_OFF_DEMONSKULL_HELL",
     label: "Череп-трофей (знаток)",
@@ -262,6 +268,46 @@ export const ITEMS = [
     id: "T4_ARTEFACT_OFF_DEMONSKULL_HELL",
     value: "T4_ARTEFACT_OFF_DEMONSKULL_HELL",
     label: "Демоническая челюстная кость (знаток)",
+  },
+  {
+    id: "T4_OFF_HORN_KEEPER",
+    value: "T4_OFF_HORN_KEEPER",
+    label: "Туманный зов (знаток)",
+  },
+  {
+    id: "T4_OFF_HORN_KEEPER@1",
+    value: "T4_OFF_HORN_KEEPER@1",
+    label: "Туманный зов (знаток) 1",
+  },
+  {
+    id: "T4_OFF_HORN_KEEPER@2",
+    value: "T4_OFF_HORN_KEEPER@2",
+    label: "Туманный зов (знаток) 2",
+  },
+  {
+    id: "T5_OFF_HORN_KEEPER",
+    value: "T5_OFF_HORN_KEEPER",
+    label: "Туманный зов (эксперт)",
+  },
+  {
+    id: "T5_OFF_HORN_KEEPER@1",
+    value: "T5_OFF_HORN_KEEPER@1",
+    label: "Туманный зов (эксперт) 1",
+  },
+  {
+    id: "T5_OFF_HORN_KEEPER@2",
+    value: "T5_OFF_HORN_KEEPER@2",
+    label: "Туманный зов (эксперт) 2",
+  },
+  {
+    id: "T4_ARTEFACT_OFF_HORN_KEEPER",
+    value: "T4_ARTEFACT_OFF_HORN_KEEPER",
+    label: "Рунический горн (знаток)",
+  },
+  {
+    id: "T5_ARTEFACT_OFF_HORN_KEEPER",
+    value: "T5_ARTEFACT_OFF_HORN_KEEPER",
+    label: "Рунический горн (эксперт)",
   },
   {
     id: "T4_OFF_CENSER_AVALON",
