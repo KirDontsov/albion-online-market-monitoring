@@ -1,3 +1,6 @@
 .citiesSelect {
 	width: 570px;
+	@media (max-width: 768px){
+		width: 100%;
+	}
 }
