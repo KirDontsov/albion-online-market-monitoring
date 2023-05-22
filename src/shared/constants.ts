@@ -89,6 +89,26 @@ export const RESOURCES = [
     value: "T5_ROCK",
     label: "Гранит 5",
   },
+  {
+    id: "T2_WOOD",
+    value: "T2_WOOD",
+    label: "Бревна березы",
+  },
+  {
+    id: "T3_WOOD",
+    value: "T3_WOOD",
+    label: "Бревна каштана",
+  },
+  {
+    id: "T4_WOOD",
+    value: "T4_WOOD",
+    label: "Бревна сосны",
+  },
+  {
+    id: "T5_WOOD",
+    value: "T5_WOOD",
+    label: "Бревна кедра",
+  },
 ];
 export const CRAFTED_RESOURCES = [
   {
