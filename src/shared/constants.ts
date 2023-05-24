@@ -350,6 +350,86 @@ export const ITEMS = [
     label: "Звенья небесной цепи (знаток)",
   },
   {
+    id: "T4_OFF_JESTERCANE_HELL",
+    value: "T4_OFF_JESTERCANE_HELL",
+    label: "Зловещая трость (знаток)",
+  },
+  {
+    id: "T4_OFF_JESTERCANE_HELL@1",
+    value: "T4_OFF_JESTERCANE_HELL@1",
+    label: "Зловещая трость (знаток) 1",
+  },
+  {
+    id: "T4_OFF_JESTERCANE_HELL@2",
+    value: "T4_OFF_JESTERCANE_HELL@2",
+    label: "Зловещая трость (знаток) 2",
+  },
+  {
+    id: "T4_ARTEFACT_OFF_JESTERCANE_HELL",
+    value: "T4_ARTEFACT_OFF_JESTERCANE_HELL",
+    label: "Адская рукоятка (знаток)",
+  },
+  {
+    id: "T5_OFF_JESTERCANE_HELL",
+    value: "T5_OFF_JESTERCANE_HELL",
+    label: "Зловещая трость (эксперт)",
+  },
+  {
+    id: "T5_OFF_JESTERCANE_HELL@1",
+    value: "T5_OFF_JESTERCANE_HELL@1",
+    label: "Зловещая трость (эксперт) 1",
+  },
+  {
+    id: "T5_OFF_JESTERCANE_HELL@2",
+    value: "T5_OFF_JESTERCANE_HELL@2",
+    label: "Зловещая трость (эксперт) 2",
+  },
+  {
+    id: "T5_ARTEFACT_OFF_JESTERCANE_HELL",
+    value: "T5_ARTEFACT_OFF_JESTERCANE_HELL",
+    label: "Адская рукоятка (эксперт)",
+  },
+  {
+    id: "T4_OFF_LAMP_UNDEAD",
+    value: "T4_OFF_LAMP_UNDEAD",
+    label: "Могильная свеча (знаток)",
+  },
+  {
+    id: "T4_OFF_LAMP_UNDEAD@1",
+    value: "T4_OFF_LAMP_UNDEAD@1",
+    label: "Могильная свеча (знаток) 1",
+  },
+  {
+    id: "T4_OFF_LAMP_UNDEAD@2",
+    value: "T4_OFF_LAMP_UNDEAD@2",
+    label: "Могильная свеча (знаток) 2",
+  },
+  {
+    id: "T4_ARTEFACT_OFF_LAMP_UNDEAD",
+    value: "T4_ARTEFACT_OFF_LAMP_UNDEAD",
+    label: "Ужасная свеча (знаток)",
+  },
+  {
+    id: "T5_OFF_LAMP_UNDEAD",
+    value: "T5_OFF_LAMP_UNDEAD",
+    label: "Могильная свеча (эксперт)",
+  },
+  {
+    id: "T5_OFF_LAMP_UNDEAD@1",
+    value: "T5_OFF_LAMP_UNDEAD@1",
+    label: "Могильная свеча (эксперт) 1",
+  },
+  {
+    id: "T5_OFF_LAMP_UNDEAD@2",
+    value: "T5_OFF_LAMP_UNDEAD@2",
+    label: "Могильная свеча (эксперт) 2",
+  },
+  {
+    id: "T5_ARTEFACT_OFF_LAMP_UNDEAD",
+    value: "T5_ARTEFACT_OFF_LAMP_UNDEAD",
+    label: "Ужасная свеча (эксперт)",
+  },
+  {
     id: "T4_BAG_INSIGHT",
     value: "T4_BAG_INSIGHT",
     label: "Кошель интуиции (знаток)",
