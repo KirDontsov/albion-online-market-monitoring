@@ -1,13 +1,13 @@
 "use client";
+import { useCallback, useState } from "react";
 import styles from "./page.module.scss";
 import { CustomTable } from "@/components";
 import { Button } from "@mui/material";
 import type { Data } from "@/shared";
 import { CitiesSelect, ItemsSelect } from "@/containers";
 import { City } from "@/shared";
-import { CITIES, ITEMS } from "@/shared/constants";
+import { CITIES } from "@/shared/constants";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { useCallback, useEffect, useState } from "react";
 
 export interface Inputs {
   items: City[];
@@ -41,12 +41,6 @@ export default function Home() {
       throw new Error(e?.message || e);
     }
   };
-
-  useEffect(() => {
-    getData([ITEMS[0]], [CITIES[0]]).then((response) => {
-      setData(response);
-    });
-  }, []);
 
   const form = useForm<Inputs>({ defaultValues: DEFAULT_VALUES });
 
