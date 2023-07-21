@@ -265,11 +265,6 @@ export const ITEMS = [
     label: "Расписанный камень (знаток)",
   },
   {
-    id: "T4_ARTEFACT_TOKEN_FAVOR_3",
-    value: "T4_ARTEFACT_TOKEN_FAVOR_3",
-    label: "Кристаллизованная магия (знаток)",
-  },
-  {
     id: "T4_OFF_DEMONSKULL_HELL",
     value: "T4_OFF_DEMONSKULL_HELL",
     label: "Череп-трофей (знаток)",

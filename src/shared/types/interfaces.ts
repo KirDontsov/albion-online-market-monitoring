@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface Data {
   item_id: string;
   city: string;
@@ -16,4 +18,9 @@ export interface City {
   id: string;
   label: string;
   value: string;
+}
+
+export interface SharedProps {
+  children?: ReactNode | ReactNode[];
+  className?: string;
 }

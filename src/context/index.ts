@@ -1,0 +1,1 @@
+export { MuiThemeProvider } from "./MuiThemeProvider";

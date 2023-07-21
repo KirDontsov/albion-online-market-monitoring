@@ -23,8 +23,6 @@ import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
@@ -259,7 +257,6 @@ export const CustomTable: FC<CustomTableProps> = memo(({ data }) => {
   const [orderBy, setOrderBy] = useState<keyof Data>("item_id");
   const [selected, setSelected] = useState<readonly string[]>([]);
   const [page] = useState(0);
-  const [dense, setDense] = useState(false);
   const [rowsPerPage] = useState(5);
 
   const handleRequestSort = (
@@ -278,10 +275,6 @@ export const CustomTable: FC<CustomTableProps> = memo(({ data }) => {
       return;
     }
     setSelected([]);
-  };
-
-  const handleChangeDense = (event: ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
   };
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
@@ -307,7 +300,7 @@ export const CustomTable: FC<CustomTableProps> = memo(({ data }) => {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
+            size="small"
           >
             <EnhancedTableHead
               numSelected={selected.length}
@@ -443,7 +436,7 @@ export const CustomTable: FC<CustomTableProps> = memo(({ data }) => {
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: (dense ? 33 : 53) * emptyRows,
+                    height: 33 * emptyRows,
                   }}
                 >
                   <TableCell colSpan={6} />
@@ -453,10 +446,6 @@ export const CustomTable: FC<CustomTableProps> = memo(({ data }) => {
           </Table>
         </TableContainer>
       </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      />
     </Box>
   );
 });

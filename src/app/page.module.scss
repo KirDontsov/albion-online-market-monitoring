@@ -6,17 +6,3 @@
   padding: 2rem;
   min-height: 100vh;
 }
-
-.header {
-  width: 100%;
-  height: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  padding: 24px;
-  @media (max-width: 768px){
-    flex-direction: column;
-    height: auto;
-  }
-}
