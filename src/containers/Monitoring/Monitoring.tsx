@@ -1,86 +1,49 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { FC } from "react";
 import { CollapsibleTable } from "@/components/CollapsibleTable";
-import { ExtendedData } from "@/components/CollapsibleTable/interfaces";
 import { MuiThemeProvider } from "@/context";
 import styles from "./monitoring.module.scss";
 import Paper from "@mui/material/Paper";
+import { Curtain } from "@/components";
+import { useGate, useStore } from "effector-react";
+import {
+  $artefactItems,
+  $itemsLoading,
+  $martlockCraftItems,
+  $otherItems,
+  MonitoringGate,
+} from "@/entities";
 
-export const Monitoring = () => {
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<ExtendedData[]>([]);
-  const getData = async (): Promise<ExtendedData[]> => {
-    try {
-      setLoading(true);
-      const res = await fetch(`http://127.0.0.1:8080/api/items`);
-      if (!res.ok) {
-        console.warn("Failed to fetch data");
-      }
-      setLoading(false);
-      return res.json();
-    } catch (e) {
-      // @ts-ignore
-      throw new Error(e?.message || e);
-    }
-  };
+export const Monitoring: FC = () => {
+  const loading = useStore($itemsLoading);
+  const martlockCraftItems = useStore($martlockCraftItems);
+  const otherItems = useStore($otherItems);
+  const artefactItems = useStore($artefactItems);
 
-  useEffect(() => {
-    getData().then((data) => {
-      setData(data);
-    });
-  }, []);
-
-  const { martlockCraftItems, otherItems } = useMemo(() => {
-    const martlockCraftItems = data.reduce((acc: ExtendedData[], cur) => {
-      if (/OFF/.test(cur.item_id) && !/ARTEFACT/.test(cur.item_id)) {
-        acc.push({
-          ...cur,
-          maxPrice: Math.max(
-            ...[
-              Number(cur.sell_price_thetford),
-              Number(cur.sell_price_fort_sterling),
-              Number(cur.sell_price_martlock),
-            ]
-          ).toString(),
-        });
-      }
-      return acc;
-    }, []);
-
-    const otherItems = data.reduce((acc: ExtendedData[], cur) => {
-      if (/T4_2H|T4_MAIN/.test(cur.item_id) && !/ARTEFACT/.test(cur.item_id)) {
-        acc.push({
-          ...cur,
-          maxPrice: Math.max(
-            ...[
-              Number(cur.sell_price_thetford),
-              Number(cur.sell_price_fort_sterling),
-              Number(cur.sell_price_martlock),
-            ]
-          ).toString(),
-        });
-      }
-      return acc;
-    }, []);
-
-    return {
-      martlockCraftItems,
-      otherItems,
-    };
-  }, [data]);
+  useGate(MonitoringGate);
 
   if (loading) {
-    return <>loading...</>;
+    return <div className={styles.loadingWrap}>loading...</div>;
   }
 
   return (
     <MuiThemeProvider>
       <Paper className={styles.monitoringWrap}>
-        <h2>Martlock</h2>
-        <CollapsibleTable data={martlockCraftItems} />
-        <h2>Other</h2>
-        <CollapsibleTable data={otherItems} />
+        <div>
+          <h4>Martlock</h4>
+          <CollapsibleTable data={martlockCraftItems ?? []} />
+        </div>
+        <div>
+          <h4>Other</h4>
+          <CollapsibleTable data={otherItems ?? []} />
+        </div>
+
+        <div>
+          <h4>Закупки</h4>
+          <CollapsibleTable data={artefactItems ?? []} artefacts />
+        </div>
       </Paper>
+      <Curtain />
     </MuiThemeProvider>
   );
 };

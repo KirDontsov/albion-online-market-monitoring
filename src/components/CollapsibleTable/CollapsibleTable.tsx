@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -8,10 +8,12 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { ExtendedData } from "@/components/CollapsibleTable/interfaces";
+import { useEvent } from "effector-react";
+import { setSelectedItem } from "@/entities";
+import styles from "./table.module.scss";
 
 const SubRow = ({ open }: { row?: ExtendedData; open: boolean }) => {
   return (
@@ -48,17 +50,56 @@ const SubRow = ({ open }: { row?: ExtendedData; open: boolean }) => {
 
 export interface RowProps {
   row: ExtendedData;
+  index: number;
+  artefacts?: boolean;
 }
 
 const PRIMARY = "#885AF8";
-export const Row: FC<RowProps> = ({ row }) => {
+const SUCCESS = "#2ED47A";
+const NEGATIVE = "#F7685B";
+export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
   const [open, setOpen] = useState(false);
   const handleCollapse = () => setOpen((prevState) => !prevState);
+  const selectItem = useEvent(setSelectedItem);
+
+  const handleOpenCurtain = useCallback(
+    (id: string) => {
+      selectItem(id);
+    },
+    [selectItem]
+  );
+
+  const profit_thetford = Math.floor(
+    Number(row.sell_price_thetford) -
+      Number(row.craft_price) -
+      (Number(row.sell_price_thetford) / 100) * 10.5
+  );
+
+  const profit_fort = Math.floor(
+    Number(row.sell_price_fort_sterling) -
+      Number(row.craft_price) -
+      (Number(row.sell_price_fort_sterling) / 100) * 10.5
+  );
+
+  const profit_martlock = Math.floor(
+    Number(row.sell_price_martlock) -
+      Number(row.craft_price) -
+      (Number(row.sell_price_martlock) / 100) * 10.5
+  );
+
+  const handleClickCell = (value: string) =>
+    navigator.clipboard.writeText(value).then();
 
   return (
     <>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
+      <TableRow
+        {...(index % 2 === 0 ? { style: { backgroundColor: "#373b3d" } } : {})}
+        className={styles.row}
+        sx={{
+          "& > *": { borderBottom: "unset" },
+        }}
+      >
+        <TableCell className={styles.firstCell}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -67,15 +108,20 @@ export const Row: FC<RowProps> = ({ row }) => {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
-          {row.label}
+        <TableCell
+          component="th"
+          scope="row"
+          onClick={() => handleClickCell(row.label.split(" (знаток)")[0])}
+        >
+          {row.label.split(" (знаток)")[0]}
         </TableCell>
-        <TableCell align="right">
+        <TableCell align="right" onClick={() => handleOpenCurtain(row.item_id)}>
           {/@/.test(row.item_id)
             ? ["4.", row.item_id.split("@")[1]].concat()
             : 4}
         </TableCell>
         <TableCell
+          onClick={() => handleOpenCurtain(row.item_id)}
           style={{
             background: row.maxPrice === row.sell_price_thetford ? PRIMARY : "",
           }}
@@ -85,6 +131,7 @@ export const Row: FC<RowProps> = ({ row }) => {
         </TableCell>
 
         <TableCell
+          onClick={() => handleOpenCurtain(row.item_id)}
           style={{
             background:
               row.maxPrice === row.sell_price_fort_sterling ? PRIMARY : "",
@@ -95,6 +142,7 @@ export const Row: FC<RowProps> = ({ row }) => {
         </TableCell>
 
         <TableCell
+          onClick={() => handleOpenCurtain(row.item_id)}
           style={{
             background: row.maxPrice === row.sell_price_martlock ? PRIMARY : "",
           }}
@@ -102,9 +150,67 @@ export const Row: FC<RowProps> = ({ row }) => {
         >
           {row.sell_price_martlock}
         </TableCell>
-        {/*<TableCell align="right">{row.profit_thetford}</TableCell>*/}
-        {/*<TableCell align="right">{row.profit_fort}</TableCell>*/}
-        {/*<TableCell align="right">{row.profit_martlock}</TableCell>*/}
+        {!artefacts && (
+          <>
+            <TableCell
+              onClick={() => handleOpenCurtain(row.item_id)}
+              style={{
+                background:
+                  profit_thetford <= 0
+                    ? NEGATIVE
+                    : Number(row.maxProfit) === profit_thetford
+                    ? SUCCESS
+                    : "",
+              }}
+              align="right"
+            >
+              {profit_thetford}
+            </TableCell>
+            <TableCell
+              onClick={() => handleOpenCurtain(row.item_id)}
+              style={{
+                background:
+                  profit_fort <= 0
+                    ? NEGATIVE
+                    : Number(row.maxProfit) === profit_fort
+                    ? SUCCESS
+                    : "",
+              }}
+              align="right"
+            >
+              {profit_fort}
+            </TableCell>
+            <TableCell
+              onClick={() => handleOpenCurtain(row.item_id)}
+              style={{
+                background:
+                  profit_martlock <= 0
+                    ? NEGATIVE
+                    : Number(row.maxProfit) === profit_martlock
+                    ? SUCCESS
+                    : "",
+              }}
+              align="right"
+            >
+              {profit_martlock}
+            </TableCell>
+          </>
+        )}
+        <TableCell
+          className={styles.lastCell}
+          onClick={() => handleOpenCurtain(row.item_id)}
+          align="right"
+        >
+          {Number(row.orders_thetford) > 0 && (
+            <p>{`Thet: ${row.orders_thetford}`}</p>
+          )}
+          {Number(row.orders_fort_sterling) > 0 && (
+            <p>{`Fort: ${row.orders_fort_sterling}`}</p>
+          )}
+          {Number(row.orders_martlock) > 0 && (
+            <p>{`Mart: ${row.orders_martlock}`}</p>
+          )}
+        </TableCell>
       </TableRow>
       <SubRow key={row.item_id} row={row} open={open} />
     </>
@@ -113,32 +219,49 @@ export const Row: FC<RowProps> = ({ row }) => {
 
 export interface CollapsibleTableProps {
   data: ExtendedData[];
+  artefacts?: boolean;
 }
 
-export const CollapsibleTable: FC<CollapsibleTableProps> = ({ data }) => {
+export const CollapsibleTable: FC<CollapsibleTableProps> = ({
+  data,
+  artefacts = false,
+}) => {
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={"div"}>
       <Table
         aria-label="collapsible table"
         size="small"
-        style={{ maxWidth: "850px" }}
+        style={{ maxWidth: "750px" }}
       >
         <TableHead>
-          <TableRow>
+          <TableRow className={styles.headRow}>
             <TableCell />
             <TableCell>Предмет</TableCell>
             <TableCell align="right">Тир</TableCell>
-            <TableCell align="right">Цена Thetford</TableCell>
-            <TableCell align="right">Цена Fort St</TableCell>
-            <TableCell align="right">Цена Martlock</TableCell>
-            {/*<TableCell align="right">Прибыль Thetford</TableCell>*/}
-            {/*<TableCell align="right">Прибыль Fort St</TableCell>*/}
-            {/*<TableCell align="right">Прибыль Martlock</TableCell>*/}
+            <TableCell align="right">Ц. Thet</TableCell>
+            <TableCell align="right">Ц. Fort</TableCell>
+            <TableCell align="right">Ц. Mart</TableCell>
+            {!artefacts && (
+              <>
+                <TableCell align="right">$ Thet</TableCell>
+                <TableCell align="right">$ Fort</TableCell>
+                <TableCell align="right">$ Mart</TableCell>
+              </>
+            )}
+
+            <TableCell className={styles.lastHeadCell} align="right">
+              Заказы
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {data?.map((row) => (
-            <Row key={row.item_id} row={row} />
+          {data?.map((row, index) => (
+            <Row
+              key={row.item_id}
+              row={row}
+              index={index}
+              artefacts={artefacts}
+            />
           ))}
         </TableBody>
       </Table>

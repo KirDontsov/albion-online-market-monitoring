@@ -1,0 +1,20 @@
+.row {
+	cursor: pointer;
+}
+
+.firstCell {
+	 border-radius: 16px 0 0 16px;
+ }
+
+.lastCell {
+	border-radius: 0 16px 16px 0;
+	padding-right: 16px;
+}
+
+.lastHeadCell {
+	padding-right: 16px;
+}
+
+//.headRow {
+//	border-bottom: 1px solid #fff;
+//}
