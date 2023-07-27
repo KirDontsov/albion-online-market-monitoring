@@ -12,7 +12,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { ExtendedData } from "@/components/CollapsibleTable/interfaces";
 import { useEvent } from "effector-react";
-import { setSelectedItem } from "@/entities";
+import { setSelectedArtefact, setSelectedItem } from "@/entities";
 import styles from "./table.module.scss";
 
 const SubRow = ({ open }: { row?: ExtendedData; open: boolean }) => {
@@ -61,31 +61,54 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
   const [open, setOpen] = useState(false);
   const handleCollapse = () => setOpen((prevState) => !prevState);
   const selectItem = useEvent(setSelectedItem);
+  const selectArtefact = useEvent(setSelectedArtefact);
 
   const handleOpenCurtain = useCallback(
     (id: string) => {
-      selectItem(id);
+      if (!artefacts) {
+        selectItem(id);
+      } else {
+        selectArtefact(id);
+      }
     },
-    [selectItem]
+    [artefacts, selectArtefact, selectItem]
   );
 
-  const profit_thetford = Math.floor(
-    Number(row.sell_price_thetford) -
-      Number(row.craft_price) -
-      (Number(row.sell_price_thetford) / 100) * 10.5
-  );
+  const profit_thetford = !/@/.test(row.item_id)
+    ? Math.floor(
+        Number(row.sell_price_thetford) -
+          Number(row.craft_price) -
+          (Number(row.sell_price_thetford) / 100) * 10.5
+      )
+    : Math.floor(
+        Number(row.sell_price_thetford) -
+          Number(row.enchantment_price) -
+          (Number(row.sell_price_thetford) / 100) * 10.5
+      );
 
-  const profit_fort = Math.floor(
-    Number(row.sell_price_fort_sterling) -
-      Number(row.craft_price) -
-      (Number(row.sell_price_fort_sterling) / 100) * 10.5
-  );
+  const profit_fort = !/@/.test(row.item_id)
+    ? Math.floor(
+        Number(row.sell_price_fort_sterling) -
+          Number(row.craft_price) -
+          (Number(row.sell_price_fort_sterling) / 100) * 10.5
+      )
+    : Math.floor(
+        Number(row.sell_price_fort_sterling) -
+          Number(row.enchantment_price) -
+          (Number(row.sell_price_fort_sterling) / 100) * 10.5
+      );
 
-  const profit_martlock = Math.floor(
-    Number(row.sell_price_martlock) -
-      Number(row.craft_price) -
-      (Number(row.sell_price_martlock) / 100) * 10.5
-  );
+  const profit_martlock = !/@/.test(row.item_id)
+    ? Math.floor(
+        Number(row.sell_price_martlock) -
+          Number(row.craft_price) -
+          (Number(row.sell_price_martlock) / 100) * 10.5
+      )
+    : Math.floor(
+        Number(row.sell_price_martlock) -
+          Number(row.enchantment_price) -
+          (Number(row.sell_price_martlock) / 100) * 10.5
+      );
 
   const handleClickCell = (value: string) =>
     navigator.clipboard.writeText(value).then();

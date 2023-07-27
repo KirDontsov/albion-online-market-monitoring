@@ -3,4 +3,4 @@ export * from "./FormComboBox";
 export * from "./FormInput";
 export * from "./CitiesSelect";
 export * from "./ItemsSelect";
-export * from "./Curtain";
+export * from "../containers/Monitoring/ItemsCurtain";

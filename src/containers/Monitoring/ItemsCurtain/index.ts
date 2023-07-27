@@ -1,0 +1,1 @@
+export { ItemsCurtain } from "./ItemsCurtain";

@@ -1,0 +1,1 @@
+export { ArtefactsCurtain } from "./ArtefactsCurtain";

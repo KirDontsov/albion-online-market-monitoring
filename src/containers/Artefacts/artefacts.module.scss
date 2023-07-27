@@ -1,0 +1,19 @@
+.artefactsWrap {
+	padding: 32px;
+	display: flex;
+	gap: 24px;
+	flex-wrap: wrap;
+	min-height: 100vh;
+}
+
+.artefactsWrap > div {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.loadingWrap {
+	height: 100vh;
+	color: white;
+	padding: 24px;
+ }

@@ -1,6 +1,6 @@
 import { createGate } from "effector-react";
 import { combine, createEffect, createStore, forward, sample } from "effector";
-import { getItems } from "@/shared/api/getItems/getItems";
+import { getItems } from "@/shared/api";
 import { ExtendedData } from "@/components/CollapsibleTable/interfaces";
 
 export const $items = createStore<ExtendedData[] | null>([]);
@@ -30,7 +30,17 @@ sample({
 
 export const $martlockCraftItems = combine($items, (items) =>
   items?.reduce((acc: ExtendedData[], cur) => {
-    if (/OFF/.test(cur.item_id) && !/ARTEFACT/.test(cur.item_id)) {
+    if (/OFF/.test(cur.item_id)) {
+      const craftPrice = Math.floor(
+        [
+          Number(cur.artefact?.sell_price_thetford),
+          Number(cur.artefact?.sell_price_fort_sterling),
+          Number(cur.artefact?.sell_price_martlock),
+        ].reduce((acc, next) => acc + next, 0) /
+          3 +
+          Number(cur.craft_price)
+      ).toString();
+
       acc.push({
         ...cur,
         maxPrice: Math.max(
@@ -40,25 +50,46 @@ export const $martlockCraftItems = combine($items, (items) =>
             Number(cur.sell_price_martlock),
           ]
         ).toString(),
-        maxProfit: Math.max(
-          ...[
-            Math.floor(
-              Number(cur.sell_price_thetford) -
-                Number(cur.craft_price) -
-                (Number(cur.sell_price_thetford) / 100) * 10.5
-            ),
-            Math.floor(
-              Number(cur.sell_price_fort_sterling) -
-                Number(cur.craft_price) -
-                (Number(cur.sell_price_fort_sterling) / 100) * 10.5
-            ),
-            Math.floor(
-              Number(cur.sell_price_martlock) -
-                Number(cur.craft_price) -
-                (Number(cur.sell_price_martlock) / 100) * 10.5
-            ),
-          ]
-        ).toString(),
+        maxProfit: !/@/.test(cur.item_id)
+          ? Math.max(
+              ...[
+                Math.floor(
+                  Number(cur.sell_price_thetford) -
+                    Number(craftPrice) -
+                    (Number(cur.sell_price_thetford) / 100) * 10.5
+                ),
+                Math.floor(
+                  Number(cur.sell_price_fort_sterling) -
+                    Number(craftPrice) -
+                    (Number(cur.sell_price_fort_sterling) / 100) * 10.5
+                ),
+                Math.floor(
+                  Number(cur.sell_price_martlock) -
+                    Number(craftPrice) -
+                    (Number(cur.sell_price_martlock) / 100) * 10.5
+                ),
+              ]
+            ).toString()
+          : Math.max(
+              ...[
+                Math.floor(
+                  Number(cur.sell_price_thetford) -
+                    Number(cur.enchantment_price) -
+                    (Number(cur.sell_price_thetford) / 100) * 10.5
+                ),
+                Math.floor(
+                  Number(cur.sell_price_fort_sterling) -
+                    Number(cur.enchantment_price) -
+                    (Number(cur.sell_price_fort_sterling) / 100) * 10.5
+                ),
+                Math.floor(
+                  Number(cur.sell_price_martlock) -
+                    Number(cur.enchantment_price) -
+                    (Number(cur.sell_price_martlock) / 100) * 10.5
+                ),
+              ]
+            ).toString(),
+        craft_price: craftPrice,
       });
     }
     return acc;
@@ -67,7 +98,16 @@ export const $martlockCraftItems = combine($items, (items) =>
 
 export const $otherItems = combine($items, (items) =>
   items?.reduce((acc: ExtendedData[], cur) => {
-    if (/T4_2H|T4_MAIN/.test(cur.item_id) && !/ARTEFACT/.test(cur.item_id)) {
+    if (/T4_2H|T4_MAIN/.test(cur.item_id)) {
+      const craftPrice = Math.floor(
+        [
+          Number(cur.artefact?.sell_price_thetford),
+          Number(cur.artefact?.sell_price_fort_sterling),
+          Number(cur.artefact?.sell_price_martlock),
+        ].reduce((acc, next) => acc + next, 0) /
+          3 +
+          Number(cur.craft_price)
+      ).toString();
       acc.push({
         ...cur,
         maxPrice: Math.max(
@@ -77,62 +117,46 @@ export const $otherItems = combine($items, (items) =>
             Number(cur.sell_price_martlock),
           ]
         ).toString(),
-        maxProfit: Math.max(
-          ...[
-            Math.floor(
-              Number(cur.sell_price_thetford) -
-                Number(cur.craft_price) -
-                (Number(cur.sell_price_thetford) / 100) * 10.5
-            ),
-            Math.floor(
-              Number(cur.sell_price_fort_sterling) -
-                Number(cur.craft_price) -
-                (Number(cur.sell_price_fort_sterling) / 100) * 10.5
-            ),
-            Math.floor(
-              Number(cur.sell_price_martlock) -
-                Number(cur.craft_price) -
-                (Number(cur.sell_price_martlock) / 100) * 10.5
-            ),
-          ]
-        ).toString(),
-      });
-    }
-    return acc;
-  }, [])
-);
-
-export const $artefactItems = combine($items, (items) =>
-  items?.reduce((acc: ExtendedData[], cur) => {
-    if (/ARTEFACT/.test(cur.item_id) && !/T4_2H|T4_MAIN/.test(cur.item_id)) {
-      acc.push({
-        ...cur,
-        maxPrice: Math.min(
-          ...[
-            Number(cur.sell_price_thetford),
-            Number(cur.sell_price_fort_sterling),
-            Number(cur.sell_price_martlock),
-          ]
-        ).toString(),
-        maxProfit: Math.min(
-          ...[
-            Math.floor(
-              Number(cur.sell_price_thetford) -
-                Number(cur.craft_price) -
-                (Number(cur.sell_price_thetford) / 100) * 10.5
-            ),
-            Math.floor(
-              Number(cur.sell_price_fort_sterling) -
-                Number(cur.craft_price) -
-                (Number(cur.sell_price_fort_sterling) / 100) * 10.5
-            ),
-            Math.floor(
-              Number(cur.sell_price_martlock) -
-                Number(cur.craft_price) -
-                (Number(cur.sell_price_martlock) / 100) * 10.5
-            ),
-          ]
-        ).toString(),
+        maxProfit: !/@/.test(cur.item_id)
+          ? Math.max(
+              ...[
+                Math.floor(
+                  Number(cur.sell_price_thetford) -
+                    Number(craftPrice) -
+                    (Number(cur.sell_price_thetford) / 100) * 10.5
+                ),
+                Math.floor(
+                  Number(cur.sell_price_fort_sterling) -
+                    Number(craftPrice) -
+                    (Number(cur.sell_price_fort_sterling) / 100) * 10.5
+                ),
+                Math.floor(
+                  Number(cur.sell_price_martlock) -
+                    Number(craftPrice) -
+                    (Number(cur.sell_price_martlock) / 100) * 10.5
+                ),
+              ]
+            ).toString()
+          : Math.max(
+              ...[
+                Math.floor(
+                  Number(cur.sell_price_thetford) -
+                    Number(cur.enchantment_price) -
+                    (Number(cur.sell_price_thetford) / 100) * 10.5
+                ),
+                Math.floor(
+                  Number(cur.sell_price_fort_sterling) -
+                    Number(cur.enchantment_price) -
+                    (Number(cur.sell_price_fort_sterling) / 100) * 10.5
+                ),
+                Math.floor(
+                  Number(cur.sell_price_martlock) -
+                    Number(cur.enchantment_price) -
+                    (Number(cur.sell_price_martlock) / 100) * 10.5
+                ),
+              ]
+            ).toString(),
+        craft_price: craftPrice,
       });
     }
     return acc;

@@ -1,26 +1,26 @@
+"use client";
 import { useCallback, FC, useMemo, useEffect } from "react";
 import { useEvent, useStore } from "effector-react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import {
-  $selectedItem,
-  setSelectedItem,
-  $itemInfo,
-  $itemInfoLoading,
-  updateItemInfo,
-} from "@/entities";
+import { $selectedArtefact, setSelectedArtefact } from "@/entities";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormInput } from "@/components";
 import { Button, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { useKeyPress } from "@/components/Curtain/hooks";
+import { useKeyPress } from "@/shared";
+import {
+  $artefactInfo,
+  $artefactInfoLoading,
+  updateArtefactInfo,
+} from "@/entities/artefactInfo";
 
-export const Curtain: FC = () => {
-  const selectedItem = useStore($selectedItem);
-  const itemInfo = useStore($itemInfo);
-  const itemInfoLoading = useStore($itemInfoLoading);
-  const toggleCurtain = useEvent(setSelectedItem);
-  const saveItemInfo = useEvent(updateItemInfo);
+export const ArtefactsCurtain: FC = () => {
+  const selectedItem = useStore($selectedArtefact);
+  const itemInfo = useStore($artefactInfo);
+  const itemInfoLoading = useStore($artefactInfoLoading);
+  const toggleCurtain = useEvent(setSelectedArtefact);
+  const saveItemInfo = useEvent(updateArtefactInfo);
 
   const defaultValues = useMemo(
     () =>
@@ -29,7 +29,6 @@ export const Curtain: FC = () => {
         : {
             label: "",
             item_id: "",
-            craft_price: "",
             sell_price_fort_sterling: "",
             sell_price_martlock: "",
             sell_price_thetford: "",

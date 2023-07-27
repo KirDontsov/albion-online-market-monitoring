@@ -1,2 +1,2 @@
-export * from "./getItems";
-export * from "./getItem";
+export * from "./items";
+export * from "./artefacts";

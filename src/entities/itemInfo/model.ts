@@ -1,8 +1,7 @@
 import { createEffect, createEvent, createStore, sample } from "effector";
 import { ExtendedData } from "@/components/CollapsibleTable/interfaces";
-import { getItem } from "@/shared/api";
+import { getItem, updateItem } from "@/shared/api";
 import { $selectedItem, fetchItemsFx, setSelectedItem } from "@/entities";
-import { updateItem } from "@/shared/api/updateItem/updateItem";
 
 export const $itemInfo = createStore<ExtendedData | null>(null);
 export const $itemInfoLoading = createStore<boolean>(false);
