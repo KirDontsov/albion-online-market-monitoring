@@ -22,6 +22,7 @@ export const DEFAULT_VALUES: ExtendedData = {
   item_id: "",
   craft_price: "",
   artefact_id: "",
+  enchantment_price: "",
   sell_price_fort_sterling: "",
   sell_price_martlock: "",
   sell_price_thetford: "",
