@@ -12,6 +12,7 @@ import {
   $otherItems,
   MonitoringGate,
 } from "@/entities";
+import { Layout } from "@/containers/Layout";
 
 export const Monitoring: FC = () => {
   const loading = useStore($itemsLoading);
@@ -25,18 +26,20 @@ export const Monitoring: FC = () => {
   }
 
   return (
-    <MuiThemeProvider>
-      <Paper className={styles.monitoringWrap}>
-        <div>
-          <h4>Martlock</h4>
-          <CollapsibleTable data={martlockCraftItems ?? []} />
-        </div>
-        <div>
-          <h4>Other</h4>
-          <CollapsibleTable data={otherItems ?? []} />
-        </div>
-      </Paper>
-      <ItemsCurtain />
-    </MuiThemeProvider>
+    <Layout>
+      <MuiThemeProvider>
+        <Paper className={styles.monitoringWrap}>
+          <div>
+            <h4>Martlock</h4>
+            <CollapsibleTable data={martlockCraftItems ?? []} />
+          </div>
+          <div>
+            <h4>Other</h4>
+            <CollapsibleTable data={otherItems ?? []} />
+          </div>
+        </Paper>
+        <ItemsCurtain />
+      </MuiThemeProvider>
+    </Layout>
   );
 };

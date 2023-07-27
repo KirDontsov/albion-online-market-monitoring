@@ -7,6 +7,7 @@ import { useGate, useStore } from "effector-react";
 import { $artefactItems, $artefactsLoading, ArtefactsGate } from "@/entities";
 import styles from "./artefacts.module.scss";
 import { ArtefactsCurtain } from "./ArtefactsCurtain";
+import { Layout } from "@/containers/Layout";
 
 export const Artefacts: FC = () => {
   const loading = useStore($artefactsLoading);
@@ -19,14 +20,16 @@ export const Artefacts: FC = () => {
   }
 
   return (
-    <MuiThemeProvider>
-      <Paper className={styles.artefactsWrap}>
-        <div>
-          <h4>Закупки</h4>
-          <CollapsibleTable data={artefactItems ?? []} artefacts />
-        </div>
-      </Paper>
-      <ArtefactsCurtain />
-    </MuiThemeProvider>
+    <Layout>
+      <MuiThemeProvider>
+        <Paper className={styles.artefactsWrap}>
+          <div>
+            <h4>Закупки</h4>
+            <CollapsibleTable data={artefactItems ?? []} artefacts />
+          </div>
+        </Paper>
+        <ArtefactsCurtain />
+      </MuiThemeProvider>
+    </Layout>
   );
 };

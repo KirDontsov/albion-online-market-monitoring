@@ -7,6 +7,7 @@ import { CustomTable } from "@/components";
 import { useCallback, useState } from "react";
 import { City, Data } from "@/shared";
 import { CITIES } from "@/shared/constants";
+import { Layout } from "@/containers/Layout";
 
 export interface Inputs {
   items: City[];
@@ -60,7 +61,7 @@ export const Check = () => {
   }
 
   return (
-    <>
+    <Layout>
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className={styles.header}>
@@ -80,6 +81,6 @@ export const Check = () => {
       </FormProvider>
 
       {data && <CustomTable data={data} />}
-    </>
+    </Layout>
   );
 };
