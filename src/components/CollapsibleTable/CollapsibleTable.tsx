@@ -113,6 +113,8 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
   const handleClickCell = (value: string) =>
     navigator.clipboard.writeText(value).then();
 
+  const tier = row.item_id.split("_")[0]?.[1];
+
   return (
     <>
       <TableRow
@@ -140,8 +142,8 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
         </TableCell>
         <TableCell align="right" onClick={() => handleOpenCurtain(row.item_id)}>
           {/@/.test(row.item_id)
-            ? ["4.", row.item_id.split("@")[1]].concat()
-            : 4}
+            ? [`${tier}.`, row.item_id.split("@")[1]].concat()
+            : tier}
         </TableCell>
         <TableCell
           onClick={() => handleOpenCurtain(row.item_id)}
