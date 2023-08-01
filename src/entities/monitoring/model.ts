@@ -98,7 +98,7 @@ export const $martlockCraftItems = combine($items, (items) =>
 
 export const $otherItems = combine($items, (items) =>
   items?.reduce((acc: ExtendedData[], cur) => {
-    if (/T4_2H|T4_MAIN/.test(cur.item_id)) {
+    if (/2H|MAIN/.test(cur.item_id)) {
       const craftPrice = Math.floor(
         [
           Number(cur.artefact?.sell_price_thetford),
