@@ -11,9 +11,15 @@ import TableRow from "@mui/material/TableRow";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { ExtendedData } from "@/components/CollapsibleTable/interfaces";
-import { useEvent } from "effector-react";
-import { setSelectedArtefact, setSelectedItem } from "@/entities";
+import { useEvent, useStore } from "effector-react";
+import {
+  $copiedItem,
+  setCopiedItem,
+  setSelectedArtefact,
+  setSelectedItem,
+} from "@/entities";
 import styles from "./table.module.scss";
+import cn from "classnames";
 
 const SubRow = ({ open }: { row?: ExtendedData; open: boolean }) => {
   return (
@@ -60,6 +66,8 @@ const NEGATIVE = "#F7685B";
 export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
   const [open, setOpen] = useState(false);
   const handleCollapse = () => setOpen((prevState) => !prevState);
+  const copiedItem = useStore($copiedItem);
+  const copyItem = useEvent(setCopiedItem);
   const selectItem = useEvent(setSelectedItem);
   const selectArtefact = useEvent(setSelectedArtefact);
 
@@ -110,16 +118,23 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
           (Number(row.sell_price_martlock) / 100) * 10.5
       );
 
-  const handleClickCell = (value: string) =>
-    navigator.clipboard.writeText(value).then();
+  const handleClickCell = useCallback(
+    (value: string, id: string) => {
+      navigator.clipboard.writeText(value).then();
+      copyItem(id);
+    },
+    [copyItem]
+  );
 
   const tier = row.item_id.split("_")[0]?.[1];
 
   return (
     <>
       <TableRow
-        {...(index % 2 === 0 ? { style: { backgroundColor: "#373b3d" } } : {})}
-        className={styles.row}
+        className={cn(`${styles.row}`, {
+          [styles.odd]: index % 2 === 0,
+          [styles.selected]: row.item_id === copiedItem,
+        })}
         sx={{
           "& > *": { borderBottom: "unset" },
         }}
@@ -136,7 +151,9 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
         <TableCell
           component="th"
           scope="row"
-          onClick={() => handleClickCell(row.label.split(" (знаток)")[0])}
+          onClick={() =>
+            handleClickCell(row.label.split(" (знаток)")[0], row.item_id)
+          }
         >
           {row.label.split(" (знаток)")[0]}
         </TableCell>
