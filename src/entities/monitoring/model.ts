@@ -1,7 +1,7 @@
 import { createGate } from "effector-react";
 import { combine, createEffect, createStore, forward, sample } from "effector";
 import { getItems } from "@/shared/api";
-import { ExtendedData } from "@/components/CollapsibleTable/interfaces";
+import type { ExtendedData } from "@/components/CollapsibleTable/interfaces";
 
 export const $items = createStore<ExtendedData[] | null>([]);
 export const $itemsLoading = createStore<boolean>(false);

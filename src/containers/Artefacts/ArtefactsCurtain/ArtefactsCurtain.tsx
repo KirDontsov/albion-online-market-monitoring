@@ -32,12 +32,15 @@ export const ArtefactsCurtain: FC = () => {
             sell_price_fort_sterling: "",
             sell_price_martlock: "",
             sell_price_thetford: "",
+            sell_price_brecilien: "",
             buy_price_fort_sterling: "",
             buy_price_martlock: "",
             buy_price_thetford: "",
+            buy_price_brecilien: "",
             orders_fort_sterling: "",
             orders_martlock: "",
             orders_thetford: "",
+            orders_brecilien: "",
             created_at: "",
             updated_at: "",
             maxPrice: "",
@@ -104,6 +107,11 @@ export const ArtefactsCurtain: FC = () => {
                 required
               />
               <FormInput
+                name="sell_price_brecilien"
+                label="Цена Brecilien"
+                required
+              />
+              <FormInput
                 name="orders_thetford"
                 label="Заказы Thetford"
                 required
@@ -116,6 +124,11 @@ export const ArtefactsCurtain: FC = () => {
               <FormInput
                 name="orders_martlock"
                 label="Заказы Martlock"
+                required
+              />
+              <FormInput
+                name="orders_brecilien"
+                label="Заказы Brecilien"
                 required
               />
             </Stack>

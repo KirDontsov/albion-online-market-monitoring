@@ -118,6 +118,18 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
           (Number(row.sell_price_martlock) / 100) * 10.5
       );
 
+  const profit_brecilien = !/@/.test(row.item_id)
+    ? Math.floor(
+        Number(row.sell_price_brecilien) -
+          Number(row.craft_price) -
+          (Number(row.sell_price_brecilien) / 100) * 10.5
+      )
+    : Math.floor(
+        Number(row.sell_price_brecilien) -
+          Number(row.enchantment_price) -
+          (Number(row.sell_price_brecilien) / 100) * 10.5
+      );
+
   const handleClickCell = useCallback(
     (value: string, id: string) => {
       navigator.clipboard.writeText(value).then();
@@ -192,6 +204,16 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
         >
           {row.sell_price_martlock}
         </TableCell>
+        <TableCell
+          onClick={() => handleOpenCurtain(row.item_id)}
+          style={{
+            background:
+              row.maxPrice === row.sell_price_brecilien ? PRIMARY : "",
+          }}
+          align="right"
+        >
+          {row.sell_price_brecilien}
+        </TableCell>
         {!artefacts && (
           <>
             <TableCell
@@ -236,6 +258,20 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
             >
               {profit_martlock}
             </TableCell>
+            <TableCell
+              onClick={() => handleOpenCurtain(row.item_id)}
+              style={{
+                background:
+                  profit_brecilien <= 0
+                    ? NEGATIVE
+                    : Number(row.maxProfit) === profit_brecilien
+                    ? SUCCESS
+                    : "",
+              }}
+              align="right"
+            >
+              {profit_brecilien}
+            </TableCell>
           </>
         )}
         <TableCell
@@ -251,6 +287,9 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
           )}
           {Number(row.orders_martlock) > 0 && (
             <p>{`Mart: ${row.orders_martlock}`}</p>
+          )}
+          {Number(row.orders_brecilien) > 0 && (
+            <p>{`Brec: ${row.orders_brecilien}`}</p>
           )}
         </TableCell>
       </TableRow>
@@ -273,7 +312,7 @@ export const CollapsibleTable: FC<CollapsibleTableProps> = ({
       <Table
         aria-label="collapsible table"
         size="small"
-        style={{ maxWidth: "750px" }}
+        style={{ maxWidth: "900px" }}
       >
         <TableHead>
           <TableRow className={styles.headRow}>
@@ -283,11 +322,13 @@ export const CollapsibleTable: FC<CollapsibleTableProps> = ({
             <TableCell align="right">Ц. Thet</TableCell>
             <TableCell align="right">Ц. Fort</TableCell>
             <TableCell align="right">Ц. Mart</TableCell>
+            <TableCell align="right">Ц. Brec</TableCell>
             {!artefacts && (
               <>
                 <TableCell align="right">$ Thet</TableCell>
                 <TableCell align="right">$ Fort</TableCell>
                 <TableCell align="right">$ Mart</TableCell>
+                <TableCell align="right">$ Brec</TableCell>
               </>
             )}
 
