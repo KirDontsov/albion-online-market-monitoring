@@ -106,6 +106,7 @@ const THEME = createTheme({
       styleOverrides: {
         root: {
           boxShadow: "6px 0 18px rgba(0, 0, 0, 0.06)",
+          backgroundColor: "#242526",
         },
       },
     },

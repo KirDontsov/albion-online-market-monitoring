@@ -9,6 +9,7 @@ import {
   $itemInfo,
   $itemInfoLoading,
   updateItemInfo,
+  createNewItem,
 } from "@/entities";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormInput } from "@/components";
@@ -16,6 +17,8 @@ import { Button, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useKeyPress } from "@/shared";
 import { ExtendedData } from "@/components/CollapsibleTable/interfaces";
+
+const NEW_ITEM_ID = "__new__";
 
 export const DEFAULT_VALUES: ExtendedData = {
   label: "",
@@ -47,14 +50,18 @@ export const ItemsCurtain: FC = () => {
   const itemInfoLoading = useStore($itemInfoLoading);
   const toggleCurtain = useEvent(setSelectedItem);
   const saveItemInfo = useEvent(updateItemInfo);
+  const createItem = useEvent(createNewItem);
+
+  const isNew = selectedItem === NEW_ITEM_ID;
 
   const defaultValues = useMemo(() => {
+    if (isNew) return DEFAULT_VALUES;
     // нельзя слать на бэк artefact
     const { artefact, ...itemWithoutArtefact } = itemInfo ?? { artefact: {} };
     return itemWithoutArtefact && !itemInfoLoading
       ? itemWithoutArtefact
       : DEFAULT_VALUES;
-  }, [itemInfo, itemInfoLoading]);
+  }, [itemInfo, itemInfoLoading, isNew]);
 
   const form = useForm<ExtendedData>({ defaultValues });
 
@@ -62,10 +69,14 @@ export const ItemsCurtain: FC = () => {
   const { isDirty, isValid } = formState;
 
   const handleSubmit = useCallback(() => {
-    if (isDirty) {
-      saveItemInfo(getValues());
+    const values = getValues();
+    const now = new Date().toISOString();
+    if (isNew) {
+      createItem({ ...values, created_at: now, updated_at: now });
+    } else if (isDirty) {
+      saveItemInfo({ ...values, updated_at: now });
     }
-  }, [getValues, isDirty, saveItemInfo]);
+  }, [getValues, isDirty, saveItemInfo, createItem, isNew]);
 
   const handleReset = useCallback(() => {
     reset(defaultValues);
@@ -96,8 +107,22 @@ export const ItemsCurtain: FC = () => {
         <Box sx={{ width: 550, padding: "24px" }}>
           <FormProvider {...form}>
             <Stack spacing={2} paddingBottom={2}>
-              <Typography variant="h4">{itemInfo?.label}</Typography>
-              <Typography>{itemInfo?.item_id}</Typography>
+              {isNew && (
+                <>
+                  <Typography variant="h5">Новый предмет</Typography>
+                  <FormInput name="item_id" label="ID предмета" required />
+                  <FormInput name="label" label="Название" required />
+                  <FormInput name="craft_price" label="Цена крафта" />
+                  <FormInput name="enchantment_price" label="Цена зачарования" />
+                  <FormInput name="artefact_id" label="ID артефакта" />
+                </>
+              )}
+              {!isNew && (
+                <>
+                  <Typography variant="h4">{itemInfo?.label}</Typography>
+                  <Typography>{itemInfo?.item_id}</Typography>
+                </>
+              )}
               <FormInput
                 name="sell_price_thetford"
                 label="Цена Thetford"
@@ -145,7 +170,7 @@ export const ItemsCurtain: FC = () => {
               disabled={!isDirty || !isValid}
               onClick={handleSubmit}
             >
-              Сохранить изменения
+              {isNew ? "Создать предмет" : "Сохранить изменения"}
             </Button>
           </FormProvider>
         </Box>

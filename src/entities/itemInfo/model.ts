@@ -1,10 +1,12 @@
 import { createEffect, createEvent, createStore, sample } from "effector";
 import { ExtendedData } from "@/components/CollapsibleTable/interfaces";
-import { getItem, updateItem } from "@/shared/api";
+import { getItem, updateItem, createItem } from "@/shared/api";
 import { $selectedItem, fetchItemsFx, setSelectedItem } from "@/entities";
 
 export const $itemInfo = createStore<ExtendedData | null>(null);
 export const $itemInfoLoading = createStore<boolean>(false);
+
+const NEW_ITEM_ID = "__new__";
 
 export const fetchItemFx = createEffect(async (id: string | null) => {
   const data = await getItem(id);
@@ -13,7 +15,7 @@ export const fetchItemFx = createEffect(async (id: string | null) => {
 
 sample({
   source: $selectedItem,
-  filter: (s) => s !== null,
+  filter: (s) => s !== null && s !== NEW_ITEM_ID,
   target: fetchItemFx,
 });
 
@@ -38,13 +40,24 @@ sample({
   target: updateItemFx,
 });
 
+export const createItemFx = createEffect(async (item: ExtendedData) => {
+  const data = await createItem(item);
+  return data;
+});
+export const createNewItem = createEvent<ExtendedData>();
+
 sample({
-  clock: updateItemFx.doneData,
+  clock: createNewItem,
+  target: createItemFx,
+});
+
+sample({
+  clock: createItemFx.doneData,
   target: fetchItemsFx,
 });
 
 sample({
-  clock: updateItemFx.doneData,
+  clock: createItemFx.doneData,
   fn: () => null,
   target: setSelectedItem,
 });

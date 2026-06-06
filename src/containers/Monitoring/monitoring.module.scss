@@ -1,12 +1,18 @@
 .monitoringWrap {
 	padding: 32px;
 	display: flex;
+	flex-direction: column;
 	gap: 24px;
-	flex-wrap: wrap;
 	min-height: 100vh;
 }
 
-.monitoringWrap > div {
+.tablesWrap {
+	display: flex;
+	gap: 24px;
+	flex-wrap: wrap;
+}
+
+.tablesWrap > div {
 	display: flex;
 	flex-direction: column;
 	gap: 24px;

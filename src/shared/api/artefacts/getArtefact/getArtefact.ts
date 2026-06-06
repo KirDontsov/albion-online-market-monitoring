@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/shared/constants";
 import type { ExtendedData } from "@/components/CollapsibleTable/interfaces";
 
 export async function getArtefact(
@@ -5,7 +6,7 @@ export async function getArtefact(
 ): Promise<ExtendedData | null> {
   try {
     const response = await fetch(
-      `http://127.0.0.1:8080/api/artefact/${id ?? ""}`
+      `${API_BASE_URL}/api/artefact/${id ?? ""}`
     );
     const data = await response.json();
 

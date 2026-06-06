@@ -8,6 +8,7 @@ import { useCallback, useState } from "react";
 import { City, Data } from "@/shared";
 import { CITIES } from "@/shared/constants";
 import { Layout } from "@/containers/Layout";
+import { MuiThemeProvider } from "@/context";
 
 export interface Inputs {
   items: City[];
@@ -62,25 +63,27 @@ export const Check = () => {
 
   return (
     <Layout>
-      <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className={styles.header}>
-            <CitiesSelect />
-            <ItemsSelect />
-            <div className={styles.bottom}>
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={!isDirty || !isValid}
-              >
-                Проверить цены
-              </Button>
+      <MuiThemeProvider>
+        <FormProvider {...form}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className={styles.header}>
+              <CitiesSelect />
+              <ItemsSelect />
+              <div className={styles.bottom}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={!isDirty || !isValid}
+                >
+                  Проверить цены
+                </Button>
+              </div>
             </div>
-          </div>
-        </form>
-      </FormProvider>
+          </form>
+        </FormProvider>
 
-      {data && <CustomTable data={data} />}
+        {data.length > 0 && <CustomTable data={data} />}
+      </MuiThemeProvider>
     </Layout>
   );
 };

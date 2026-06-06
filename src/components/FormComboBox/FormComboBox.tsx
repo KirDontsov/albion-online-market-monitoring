@@ -55,7 +55,6 @@ export const FormComboBox: FC<ComboBoxProps> = ({
         {...(multi ? { multiple: true, value } : { value })}
         onChange={handleChange}
         isOptionEqualToValue={(option, v) => option?.id === v?.id}
-        disablePortal
         options={options}
         disableClearable
         renderInput={(params) => <TextField {...params} label={label} />}

@@ -279,6 +279,26 @@ export const CustomTable: FC<CustomTableProps> = memo(({ data }) => {
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
+  const handleClick = (name: string) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected: readonly string[] = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
@@ -294,7 +314,7 @@ export const CustomTable: FC<CustomTableProps> = memo(({ data }) => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
+      <Paper sx={{ width: "100%" }}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
@@ -324,10 +344,12 @@ export const CustomTable: FC<CustomTableProps> = memo(({ data }) => {
                   return null;
                 }
 
+                const handleRowClick = () => handleClick(row.item_id);
+
                 return (
                   <TableRow
                     hover
-                    // onClick={(event) => handleClick(event, row.item_id)}
+                    onClick={handleRowClick}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
@@ -339,13 +361,14 @@ export const CustomTable: FC<CustomTableProps> = memo(({ data }) => {
                         row.buy_price_max !== 0 &&
                         row.sell_price_min > row.buy_price_max + PRICE_DIFF
                           ? "#9FEE00aa"
-                          : "white",
+                          : undefined,
                     }}
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
                         color="primary"
                         checked={isItemSelected}
+                        onChange={handleRowClick}
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}

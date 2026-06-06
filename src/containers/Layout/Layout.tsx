@@ -10,6 +10,7 @@ export const Layout: FC<SharedProps> = ({ children }) => {
       <div className={styles.navBar}>
         <Link href="/monitoring">Monitoring</Link>
         <Link href="/artefacts">Artefacts</Link>
+        <Link href="/items">Items</Link>
       </div>
       <main className={styles.mainWrap}>{children}</main>
     </Paper>
