@@ -1,5 +1,7 @@
 .tableWrap {
-  margin: 24px;
-  max-height: calc(100vh - 100px);
-  overflow: auto;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 100vh;
 }

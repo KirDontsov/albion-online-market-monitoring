@@ -33,7 +33,7 @@ const SubRow = ({ row, open }: { row?: ExtendedData; open: boolean }) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Артефакт</TableCell>
-                  <TableCell>Цена Thet</TableCell>
+                  <TableCell align="right">Цена Thet</TableCell>
                   <TableCell align="right">Цена Fort</TableCell>
                   <TableCell align="right">Цена Mart</TableCell>
                   <TableCell align="right">Цена Brec</TableCell>
@@ -45,7 +45,7 @@ const SubRow = ({ row, open }: { row?: ExtendedData; open: boolean }) => {
                     <TableCell component="th" scope="row" className={styles.subRowLabel}>
                       {artefact.label}
                     </TableCell>
-                    <TableCell>{artefact.sell_price_thetford || "—"}</TableCell>
+                    <TableCell align="right">{artefact.sell_price_thetford || "—"}</TableCell>
                     <TableCell align="right">{artefact.sell_price_fort_sterling || "—"}</TableCell>
                     <TableCell align="right">{artefact.sell_price_martlock || "—"}</TableCell>
                     <TableCell align="right">{artefact.sell_price_brecilien || "—"}</TableCell>
@@ -70,6 +70,8 @@ export interface RowProps {
   row: ExtendedData;
   index: number;
   artefacts?: boolean;
+  expandable?: boolean;
+  simple?: boolean;
 }
 
 const PRIMARY = "#7c6bf0";
@@ -79,7 +81,7 @@ const SUCCESS_BG = "rgba(38, 217, 127, 0.12)";
 const NEGATIVE = "#f06050";
 const NEGATIVE_BG = "rgba(240, 96, 80, 0.12)";
 
-export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
+export const Row: FC<RowProps> = ({ row, index, artefacts = false, expandable = true, simple = false }) => {
   const [open, setOpen] = useState(false);
   const handleCollapse = () => setOpen((prevState) => !prevState);
   const copiedItem = useStore($copiedItem);
@@ -184,20 +186,22 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
           "& > *": { borderBottom: "unset" },
         }}
       >
-        <TableCell className={styles.firstCell}>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={handleCollapse}
-            sx={{
-              color: open ? PRIMARY : "#8a8ca0",
-              transition: "color 0.15s ease",
-              "&:hover": { color: PRIMARY },
-            }}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
+        {expandable && (
+          <TableCell className={styles.firstCell}>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={handleCollapse}
+              sx={{
+                color: open ? PRIMARY : "#8a8ca0",
+                transition: "color 0.15s ease",
+                "&:hover": { color: PRIMARY },
+              }}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+        )}
         <TableCell
           component="th"
           scope="row"
@@ -208,122 +212,136 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
         >
           {row.label.split(" (знаток)")[0]}
         </TableCell>
-        <TableCell
-          align="right"
-          onClick={() => handleOpenCurtain(row.item_id)}
-          sx={{ color: "#8a8ca0", fontFamily: "monospace" }}
-        >
-          {/@/.test(row.item_id)
-            ? [`${tier}.`, row.item_id.split("@")[1]].concat()
-            : tier}
-        </TableCell>
-        <TableCell
-          onClick={() => handleOpenCurtain(row.item_id)}
-          style={{ background: priceBg(row.sell_price_thetford) }}
-          align="right"
-          sx={{ fontFamily: "monospace" }}
-        >
-          {row.sell_price_thetford}
-        </TableCell>
-
-        <TableCell
-          onClick={() => handleOpenCurtain(row.item_id)}
-          style={{ background: priceBg(row.sell_price_fort_sterling) }}
-          align="right"
-          sx={{ fontFamily: "monospace" }}
-        >
-          {row.sell_price_fort_sterling}
-        </TableCell>
-
-        <TableCell
-          onClick={() => handleOpenCurtain(row.item_id)}
-          style={{ background: priceBg(row.sell_price_martlock) }}
-          align="right"
-          sx={{ fontFamily: "monospace" }}
-        >
-          {row.sell_price_martlock}
-        </TableCell>
-        <TableCell
-          onClick={() => handleOpenCurtain(row.item_id)}
-          style={{ background: priceBg(row.sell_price_brecilien) }}
-          align="right"
-          sx={{ fontFamily: "monospace" }}
-        >
-          {row.sell_price_brecilien}
-        </TableCell>
-        {!artefacts && (
+        {simple && (
+          <TableCell
+            align="right"
+            sx={{ color: "#8a8ca0", fontFamily: "monospace", fontSize: "0.8rem" }}
+          >
+            {row.item_id}
+          </TableCell>
+        )}
+        {!simple && (
+          <TableCell
+            align="right"
+            onClick={() => handleOpenCurtain(row.item_id)}
+            sx={{ color: "#8a8ca0", fontFamily: "monospace" }}
+          >
+            {/@/.test(row.item_id)
+              ? [`${tier}.`, row.item_id.split("@")[1]].concat()
+              : tier}
+          </TableCell>
+        )}
+        {!simple && (
           <>
             <TableCell
               onClick={() => handleOpenCurtain(row.item_id)}
-              style={{ background: profitBg(profit_thetford) }}
+              style={{ background: priceBg(row.sell_price_thetford) }}
               align="right"
-              sx={{
-                fontFamily: "monospace",
-                fontWeight: 600,
-                color: profitColor(profit_thetford) || undefined,
-              }}
+              sx={{ fontFamily: "monospace" }}
             >
-              {profit_thetford}
+              {row.sell_price_thetford}
+            </TableCell>
+
+            <TableCell
+              onClick={() => handleOpenCurtain(row.item_id)}
+              style={{ background: priceBg(row.sell_price_fort_sterling) }}
+              align="right"
+              sx={{ fontFamily: "monospace" }}
+            >
+              {row.sell_price_fort_sterling}
+            </TableCell>
+
+            <TableCell
+              onClick={() => handleOpenCurtain(row.item_id)}
+              style={{ background: priceBg(row.sell_price_martlock) }}
+              align="right"
+              sx={{ fontFamily: "monospace" }}
+            >
+              {row.sell_price_martlock}
             </TableCell>
             <TableCell
               onClick={() => handleOpenCurtain(row.item_id)}
-              style={{ background: profitBg(profit_fort) }}
+              style={{ background: priceBg(row.sell_price_brecilien) }}
               align="right"
-              sx={{
-                fontFamily: "monospace",
-                fontWeight: 600,
-                color: profitColor(profit_fort) || undefined,
-              }}
+              sx={{ fontFamily: "monospace" }}
             >
-              {profit_fort}
+              {row.sell_price_brecilien}
             </TableCell>
+            {!artefacts && (
+              <>
+                <TableCell
+                  onClick={() => handleOpenCurtain(row.item_id)}
+                  style={{ background: profitBg(profit_thetford) }}
+                  align="right"
+                  sx={{
+                    fontFamily: "monospace",
+                    fontWeight: 600,
+                    color: profitColor(profit_thetford) || undefined,
+                  }}
+                >
+                  {profit_thetford}
+                </TableCell>
+                <TableCell
+                  onClick={() => handleOpenCurtain(row.item_id)}
+                  style={{ background: profitBg(profit_fort) }}
+                  align="right"
+                  sx={{
+                    fontFamily: "monospace",
+                    fontWeight: 600,
+                    color: profitColor(profit_fort) || undefined,
+                  }}
+                >
+                  {profit_fort}
+                </TableCell>
+                <TableCell
+                  onClick={() => handleOpenCurtain(row.item_id)}
+                  style={{ background: profitBg(profit_martlock) }}
+                  align="right"
+                  sx={{
+                    fontFamily: "monospace",
+                    fontWeight: 600,
+                    color: profitColor(profit_martlock) || undefined,
+                  }}
+                >
+                  {profit_martlock}
+                </TableCell>
+                <TableCell
+                  onClick={() => handleOpenCurtain(row.item_id)}
+                  style={{ background: profitBg(profit_brecilien) }}
+                  align="right"
+                  sx={{
+                    fontFamily: "monospace",
+                    fontWeight: 600,
+                    color: profitColor(profit_brecilien) || undefined,
+                  }}
+                >
+                  {profit_brecilien}
+                </TableCell>
+              </>
+            )}
             <TableCell
+              className={styles.lastCell}
               onClick={() => handleOpenCurtain(row.item_id)}
-              style={{ background: profitBg(profit_martlock) }}
               align="right"
-              sx={{
-                fontFamily: "monospace",
-                fontWeight: 600,
-                color: profitColor(profit_martlock) || undefined,
-              }}
+              sx={{ fontSize: "0.8rem", color: "#8a8ca0", lineHeight: 1.4 }}
             >
-              {profit_martlock}
-            </TableCell>
-            <TableCell
-              onClick={() => handleOpenCurtain(row.item_id)}
-              style={{ background: profitBg(profit_brecilien) }}
-              align="right"
-              sx={{
-                fontFamily: "monospace",
-                fontWeight: 600,
-                color: profitColor(profit_brecilien) || undefined,
-              }}
-            >
-              {profit_brecilien}
+              {Number(row.orders_thetford) > 0 && (
+                <p>{`Thet: ${row.orders_thetford}`}</p>
+              )}
+              {Number(row.orders_fort_sterling) > 0 && (
+                <p>{`Fort: ${row.orders_fort_sterling}`}</p>
+              )}
+              {Number(row.orders_martlock) > 0 && (
+                <p>{`Mart: ${row.orders_martlock}`}</p>
+              )}
+              {Number(row.orders_brecilien) > 0 && (
+                <p>{`Brec: ${row.orders_brecilien}`}</p>
+              )}
             </TableCell>
           </>
         )}
-        <TableCell
-          className={styles.lastCell}
-          onClick={() => handleOpenCurtain(row.item_id)}
-          align="right"
-          sx={{ fontSize: "0.8rem", color: "#8a8ca0", lineHeight: 1.4 }}
-        >
-          {Number(row.orders_thetford) > 0 && (
-            <p>{`Thet: ${row.orders_thetford}`}</p>
-          )}
-          {Number(row.orders_fort_sterling) > 0 && (
-            <p>{`Fort: ${row.orders_fort_sterling}`}</p>
-          )}
-          {Number(row.orders_martlock) > 0 && (
-            <p>{`Mart: ${row.orders_martlock}`}</p>
-          )}
-          {Number(row.orders_brecilien) > 0 && (
-            <p>{`Brec: ${row.orders_brecilien}`}</p>
-          )}
-        </TableCell>
       </TableRow>
-      <SubRow key={row.item_id} row={row} open={open} />
+      {expandable && <SubRow key={row.item_id} row={row} open={open} />}
     </>
   );
 };
@@ -331,11 +349,15 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false }) => {
 export interface CollapsibleTableProps {
   data: ExtendedData[];
   artefacts?: boolean;
+  expandable?: boolean;
+  simple?: boolean;
 }
 
 export const CollapsibleTable: FC<CollapsibleTableProps> = ({
   data,
   artefacts = false,
+  expandable = true,
+  simple = false,
 }) => {
   return (
     <TableContainer component={"div"}>
@@ -346,14 +368,19 @@ export const CollapsibleTable: FC<CollapsibleTableProps> = ({
       >
         <TableHead>
           <TableRow className={styles.headRow}>
-            <TableCell />
+            {expandable && <TableCell />}
             <TableCell>Предмет</TableCell>
-            <TableCell align="right">Тир</TableCell>
-            <TableCell align="right">Ц. Thet</TableCell>
-            <TableCell align="right">Ц. Fort</TableCell>
-            <TableCell align="right">Ц. Mart</TableCell>
-            <TableCell align="right">Ц. Brec</TableCell>
-            {!artefacts && (
+            {simple && <TableCell align="right">ID</TableCell>}
+            {!simple && <TableCell align="right">Тир</TableCell>}
+            {!simple && (
+              <>
+                <TableCell align="right">Ц. Thet</TableCell>
+                <TableCell align="right">Ц. Fort</TableCell>
+                <TableCell align="right">Ц. Mart</TableCell>
+                <TableCell align="right">Ц. Brec</TableCell>
+              </>
+            )}
+            {!simple && !artefacts && (
               <>
                 <TableCell align="right">$ Thet</TableCell>
                 <TableCell align="right">$ Fort</TableCell>
@@ -361,10 +388,11 @@ export const CollapsibleTable: FC<CollapsibleTableProps> = ({
                 <TableCell align="right">$ Brec</TableCell>
               </>
             )}
-
-            <TableCell className={styles.lastHeadCell} align="right">
-              Заказы
-            </TableCell>
+            {!simple && (
+              <TableCell className={styles.lastHeadCell} align="right">
+                Заказы
+              </TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -374,6 +402,8 @@ export const CollapsibleTable: FC<CollapsibleTableProps> = ({
               row={row}
               index={index}
               artefacts={artefacts}
+              expandable={expandable}
+              simple={simple}
             />
           ))}
         </TableBody>

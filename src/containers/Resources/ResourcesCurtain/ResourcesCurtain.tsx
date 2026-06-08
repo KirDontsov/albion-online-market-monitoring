@@ -4,13 +4,13 @@ import { useEvent, useStore } from "effector-react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import {
-  $selectedArtefact,
-  setSelectedArtefact,
-  $artefactInfo,
-  $artefactInfoLoading,
-  updateArtefactInfo,
-  createNewArtefact,
-} from "@/entities";
+  $selectedResource,
+  setSelectedResource,
+  $resourceInfo,
+  $resourceInfoLoading,
+  updateResourceInfo,
+  createNewResource,
+} from "@/entities/resourceInfo";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormInput } from "@/components";
 import { Button, Stack } from "@mui/material";
@@ -18,7 +18,7 @@ import Typography from "@mui/material/Typography";
 import { useKeyPress } from "@/shared";
 import { ExtendedData } from "@/components/CollapsibleTable/interfaces";
 
-const NEW_ARTEFACT_ID = "__new__";
+const NEW_RESOURCE_ID = "__new__";
 
 const DEFAULT_VALUES: ExtendedData = {
   label: "",
@@ -44,20 +44,20 @@ const DEFAULT_VALUES: ExtendedData = {
   maxProfit: "",
 };
 
-export const ArtefactsCurtain: FC = () => {
-  const selectedItem = useStore($selectedArtefact);
-  const itemInfo = useStore($artefactInfo);
-  const itemInfoLoading = useStore($artefactInfoLoading);
-  const toggleCurtain = useEvent(setSelectedArtefact);
-  const saveItemInfo = useEvent(updateArtefactInfo);
-  const createItem = useEvent(createNewArtefact);
+export const ResourcesCurtain: FC = () => {
+  const selectedResource = useStore($selectedResource);
+  const resourceInfo = useStore($resourceInfo);
+  const resourceInfoLoading = useStore($resourceInfoLoading);
+  const toggleCurtain = useEvent(setSelectedResource);
+  const saveResourceInfo = useEvent(updateResourceInfo);
+  const createResource = useEvent(createNewResource);
 
-  const isNew = selectedItem === NEW_ARTEFACT_ID;
+  const isNew = selectedResource === NEW_RESOURCE_ID;
 
   const defaultValues = useMemo(() => {
     if (isNew) return DEFAULT_VALUES;
-    return itemInfo && !itemInfoLoading ? itemInfo : DEFAULT_VALUES;
-  }, [itemInfo, itemInfoLoading, isNew]);
+    return resourceInfo && !resourceInfoLoading ? resourceInfo : DEFAULT_VALUES;
+  }, [resourceInfo, resourceInfoLoading, isNew]);
 
   const form = useForm<ExtendedData>({ defaultValues });
 
@@ -68,11 +68,11 @@ export const ArtefactsCurtain: FC = () => {
     const values = getValues();
     const now = new Date().toISOString();
     if (isNew) {
-      createItem({ ...values, created_at: now, updated_at: now });
+      createResource({ ...values, created_at: now, updated_at: now });
     } else if (isDirty) {
-      saveItemInfo({ ...values, updated_at: now });
+      saveResourceInfo({ ...values, updated_at: now });
     }
-  }, [getValues, isDirty, saveItemInfo, createItem, isNew]);
+  }, [getValues, isDirty, saveResourceInfo, createResource, isNew]);
 
   const handleReset = useCallback(() => {
     reset(defaultValues);
@@ -89,7 +89,7 @@ export const ArtefactsCurtain: FC = () => {
   useKeyPress("Enter", handleSubmit);
   useKeyPress("Escape", handleCloseCurtain);
 
-  if (itemInfoLoading) {
+  if (resourceInfoLoading) {
     return <>Loading...</>;
   }
 
@@ -97,7 +97,7 @@ export const ArtefactsCurtain: FC = () => {
     <div>
       <Drawer
         anchor={"right"}
-        open={selectedItem !== null}
+        open={selectedResource !== null}
         onClose={handleCloseCurtain}
       >
         <Box sx={{ width: 550, padding: "24px" }}>
@@ -105,16 +105,16 @@ export const ArtefactsCurtain: FC = () => {
             <Stack spacing={2} paddingBottom={2}>
               {isNew && (
                 <>
-                  <Typography variant="h5">Новый артефакт</Typography>
-                  <FormInput name="item_id" label="ID артефакта" required />
+                  <Typography variant="h5">Новый ресурс</Typography>
+                  <FormInput name="item_id" label="ID ресурса" required />
                   <FormInput name="label" label="Название" required />
-                  <FormInput name="crafted_item_id" label="ID крафт-предмета" />
+                  <FormInput name="craft_price" label="Цена крафта" />
                 </>
               )}
               {!isNew && (
                 <>
-                  <Typography variant="h4">{itemInfo?.label}</Typography>
-                  <Typography>{itemInfo?.item_id}</Typography>
+                  <Typography variant="h4">{resourceInfo?.label}</Typography>
+                  <Typography>{resourceInfo?.item_id}</Typography>
                 </>
               )}
               <FormInput
@@ -164,7 +164,7 @@ export const ArtefactsCurtain: FC = () => {
               disabled={!isDirty || !isValid}
               onClick={handleSubmit}
             >
-              {isNew ? "Создать артефакт" : "Сохранить изменения"}
+              {isNew ? "Создать ресурс" : "Сохранить изменения"}
             </Button>
           </FormProvider>
         </Box>
