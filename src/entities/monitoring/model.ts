@@ -1,6 +1,6 @@
 import { createGate } from "effector-react";
 import { combine, createEffect, createStore, forward, sample } from "effector";
-import { getItems } from "@/shared/api";
+import { getItems, getArtefacts } from "@/shared/api";
 import type { ExtendedData } from "@/components/CollapsibleTable/interfaces";
 
 export const $items = createStore<ExtendedData[] | null>([]);
@@ -9,8 +9,16 @@ export const $itemsLoading = createStore<boolean>(false);
 export const MonitoringGate = createGate("MonitoringGate");
 
 export const fetchItemsFx = createEffect(async () => {
-  const data = await getItems();
-  return data || [];
+  const [items, artefacts] = await Promise.all([getItems(), getArtefacts()]);
+  const artefactMap = new Map<string, ExtendedData>();
+  artefacts?.forEach((a) => artefactMap.set(a.item_id, a));
+
+  return (
+    items?.map((item) => ({
+      ...item,
+      artefact: item.artefact_id ? artefactMap.get(item.artefact_id) ?? null : null,
+    })) || []
+  );
 });
 
 forward({
@@ -31,14 +39,15 @@ sample({
 export const $martlockCraftItems = combine($items, (items) =>
   items?.reduce((acc: ExtendedData[], cur) => {
     if (/OFF/.test(cur.item_id)) {
+      const artefactPrice = cur.artefact
+        ? [
+            Number(cur.artefact.sell_price_thetford),
+            Number(cur.artefact.sell_price_fort_sterling),
+            Number(cur.artefact.sell_price_martlock),
+          ].reduce((acc, next) => acc + next, 0) / 3
+        : 0;
       const craftPrice = Math.floor(
-        [
-          Number(cur.artefact?.sell_price_thetford),
-          Number(cur.artefact?.sell_price_fort_sterling),
-          Number(cur.artefact?.sell_price_martlock),
-        ].reduce((acc, next) => acc + next, 0) /
-          3 +
-          Number(cur.craft_price)
+        artefactPrice + Number(cur.craft_price)
       ).toString();
 
       acc.push({
@@ -99,14 +108,15 @@ export const $martlockCraftItems = combine($items, (items) =>
 export const $otherItems = combine($items, (items) =>
   items?.reduce((acc: ExtendedData[], cur) => {
     if (/2H|MAIN/.test(cur.item_id)) {
+      const artefactPrice = cur.artefact
+        ? [
+            Number(cur.artefact.sell_price_thetford),
+            Number(cur.artefact.sell_price_fort_sterling),
+            Number(cur.artefact.sell_price_martlock),
+          ].reduce((acc, next) => acc + next, 0) / 3
+        : 0;
       const craftPrice = Math.floor(
-        [
-          Number(cur.artefact?.sell_price_thetford),
-          Number(cur.artefact?.sell_price_fort_sterling),
-          Number(cur.artefact?.sell_price_martlock),
-        ].reduce((acc, next) => acc + next, 0) /
-          3 +
-          Number(cur.craft_price)
+        artefactPrice + Number(cur.craft_price)
       ).toString();
       acc.push({
         ...cur,

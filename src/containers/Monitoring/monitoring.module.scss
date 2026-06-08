@@ -20,6 +20,10 @@
 
 .loadingWrap {
 	height: 100vh;
-	color: white;
+	color: #8a8ca0;
 	padding: 24px;
- }
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.1rem;
+}

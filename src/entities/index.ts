@@ -4,3 +4,5 @@ export * from "./itemInfo";
 
 export * from "./artefacts";
 export * from "./artefactInfo";
+
+export * from "./resources";

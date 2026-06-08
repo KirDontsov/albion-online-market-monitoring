@@ -1,11 +1,33 @@
 .navBar {
 	display: flex;
-	padding: 24px;
-	background: #242526;
-	color: white;
-	gap: 24px;
+	padding: 16px 32px;
+	background: #181a2a;
+	color: #e0e0e8;
+	gap: 8px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	align-items: center;
+
+	& a {
+		padding: 8px 16px;
+		border-radius: 8px;
+		font-weight: 500;
+		font-size: 0.9rem;
+		transition: all 0.15s ease;
+		color: #8a8ca0;
+
+		&:hover {
+			background: rgba(124, 107, 240, 0.1);
+			color: #e0e0e8;
+		}
+	}
+}
+
+.activeLink {
+	color: #e0e0e8 !important;
+	background: rgba(124, 107, 240, 0.15);
 }
 
 .mainWrap {
-	background: #242526;
+	background: #111320;
+	min-height: 100vh;
 }

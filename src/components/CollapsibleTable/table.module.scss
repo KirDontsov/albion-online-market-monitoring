@@ -1,13 +1,18 @@
 .row {
 	cursor: pointer;
+	transition: background 0.15s ease;
+
+	&:hover {
+		background: rgba(124, 107, 240, 0.08) !important;
+	}
 }
 
 .firstCell {
-	 border-radius: 16px 0 0 16px;
- }
+	border-radius: 12px 0 0 12px;
+}
 
 .lastCell {
-	border-radius: 0 16px 16px 0;
+	border-radius: 0 12px 12px 0;
 	padding-right: 16px;
 }
 
@@ -16,9 +21,41 @@
 }
 
 .odd {
-	background: #373b3d;
+	background: rgba(255, 255, 255, 0.02);
 }
 
 .selected {
-	background: #885AF8;
+	background: rgba(124, 107, 240, 0.18) !important;
+	outline: 1px solid rgba(124, 107, 240, 0.3);
+}
+
+.subRowCell {
+	border-bottom: none !important;
+	padding: 0 !important;
+}
+
+.subRowBox {
+	margin-top: 12px;
+	margin-bottom: 8px;
+	padding: 12px 16px;
+	background: rgba(124, 107, 240, 0.04);
+	border-radius: 8px;
+	border: 1px solid rgba(124, 107, 240, 0.1);
+}
+
+.subRowLabel {
+	font-weight: 600;
+	color: #c0b8f8;
+	font-size: 0.85rem;
+}
+
+.subRowEmpty {
+	color: #8a8ca0;
+	font-style: italic;
+}
+
+.headRow {
+	& .MuiTableCell-root {
+		background: rgba(255, 255, 255, 0.02);
+	}
 }

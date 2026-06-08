@@ -25,5 +25,5 @@ export interface ExtendedData extends Data {
   ingridients?: Data[];
   maxPrice?: string;
   maxProfit?: string;
-  artefact?: Data;
+  artefact?: Data | null;
 }
