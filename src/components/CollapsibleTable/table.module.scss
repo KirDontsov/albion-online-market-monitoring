@@ -59,3 +59,28 @@
 		background: rgba(255, 255, 255, 0.02);
 	}
 }
+
+.priceCell {
+	position: relative;
+	display: table-cell;
+}
+
+.priceManual {
+	background: rgba(240, 96, 80, 0.15) !important;
+}
+
+.priceStale {
+	background: rgba(200, 40, 40, 0.25) !important;
+}
+
+.priceDate {
+	display: block;
+	font-size: 0.6rem;
+	color: #8a8ca0;
+	margin-top: 2px;
+	line-height: 1;
+}
+
+.priceDateStale {
+	color: #e05545;
+}

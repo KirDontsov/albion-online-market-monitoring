@@ -18,12 +18,14 @@ export interface Data {
   orders_brecilien: string;
   created_at: string;
   updated_at: string;
+  source: string;
 }
 
 export interface ExtendedData extends Data {
   subItems?: Data[];
   ingridients?: Data[];
   maxPrice?: string;
+  minPrice?: string;
   maxProfit?: string;
   artefact?: Data | null;
 }

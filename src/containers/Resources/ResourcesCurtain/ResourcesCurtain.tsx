@@ -42,6 +42,7 @@ const DEFAULT_VALUES: ExtendedData = {
   updated_at: "",
   maxPrice: "",
   maxProfit: "",
+  source: "api",
 };
 
 export const ResourcesCurtain: FC = () => {
@@ -66,19 +67,23 @@ export const ResourcesCurtain: FC = () => {
 
   const handleSubmit = useCallback(() => {
     const values = getValues();
-    const now = new Date().toISOString();
+    const now = Math.floor(Date.now() / 1000).toString();
     if (isNew) {
       createResource({ ...values, created_at: now, updated_at: now });
-    } else if (isDirty) {
+    } else {
       saveResourceInfo({ ...values, updated_at: now });
     }
-  }, [getValues, isDirty, saveResourceInfo, createResource, isNew]);
+  }, [getValues, saveResourceInfo, createResource, isNew]);
 
   const handleReset = useCallback(() => {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
   const handleCloseCurtain = useCallback(() => {
+    toggleCurtain(null);
+  }, [toggleCurtain]);
+
+  const handleEscapeCurtain = useCallback(() => {
     if (!isDirty) {
       toggleCurtain(null);
     }
@@ -87,7 +92,7 @@ export const ResourcesCurtain: FC = () => {
   useEffect(handleReset, [handleReset]);
 
   useKeyPress("Enter", handleSubmit);
-  useKeyPress("Escape", handleCloseCurtain);
+  useKeyPress("Escape", handleEscapeCurtain);
 
   if (resourceInfoLoading) {
     return <>Loading...</>;

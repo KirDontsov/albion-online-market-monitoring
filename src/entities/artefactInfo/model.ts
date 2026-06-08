@@ -53,6 +53,12 @@ sample({
   target: fetchArtefactsFx,
 });
 
+sample({
+  clock: updateArtefactFx.doneData,
+  fn: () => null,
+  target: setSelectedArtefact,
+});
+
 // Create artefact
 export const createNewArtefactFx = createEffect(async (artefact: ExtendedData) => {
   const data = await createArtefact(artefact);

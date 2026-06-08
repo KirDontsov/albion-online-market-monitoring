@@ -40,6 +40,17 @@ sample({
   target: updateItemFx,
 });
 
+sample({
+  clock: updateItemFx.doneData,
+  target: fetchItemsFx,
+});
+
+sample({
+  clock: updateItemFx.doneData,
+  fn: () => null,
+  target: setSelectedItem,
+});
+
 export const createItemFx = createEffect(async (item: ExtendedData) => {
   const data = await createItem(item);
   return data;

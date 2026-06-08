@@ -1,5 +1,5 @@
 import { createGate } from "effector-react";
-import { createEffect, createStore, forward, sample } from "effector";
+import { combine, createEffect, createStore, forward, sample } from "effector";
 import { getResources } from "@/shared/api";
 import type { ExtendedData } from "@/components/CollapsibleTable/interfaces";
 
@@ -27,3 +27,21 @@ sample({
   clock: fetchResourcesFx.pending,
   target: $resourcesLoading,
 });
+
+export const $resourcesWithMinPrice = combine($resources, (resources) =>
+  resources?.map((r) => {
+    const prices = [
+      Number(r.sell_price_thetford),
+      Number(r.sell_price_fort_sterling),
+      Number(r.sell_price_martlock),
+      Number(r.sell_price_brecilien),
+    ].filter((p) => p > 0);
+
+    const minPrice = prices.length > 0 ? Math.min(...prices).toString() : "";
+
+    return {
+      ...r,
+      minPrice,
+    };
+  }) ?? []
+);

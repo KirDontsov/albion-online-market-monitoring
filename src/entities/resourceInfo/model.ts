@@ -53,6 +53,12 @@ sample({
   target: fetchResourcesFx,
 });
 
+sample({
+  clock: updateResourceFx.doneData,
+  fn: () => null,
+  target: setSelectedResource,
+});
+
 // Create resource
 export const createNewResourceFx = createEffect(async (resource: ExtendedData) => {
   const data = await createResource(resource);

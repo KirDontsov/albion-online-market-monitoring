@@ -6,6 +6,13 @@
 	min-height: 100vh;
 }
 
+.toolbar {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	flex-wrap: nowrap;
+}
+
 .tablesWrap {
 	display: flex;
 	gap: 24px;

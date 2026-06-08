@@ -437,8 +437,8 @@ export const ITEMS = [
     label: "Кошель интуиции (знаток) 1",
   },
   {
-    id: "T4_BAG_INSIGHT@1",
-    value: "T4_BAG_INSIGHT@1",
+    id: "T4_BAG_INSIGHT@2",
+    value: "T4_BAG_INSIGHT@2",
     label: "Кошель интуиции (знаток) 2",
   },
   {

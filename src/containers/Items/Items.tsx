@@ -31,6 +31,7 @@ export const Items: FC = () => {
         orders_brecilien: "",
         created_at: "",
         updated_at: "",
+        source: "api",
       })),
     []
   );

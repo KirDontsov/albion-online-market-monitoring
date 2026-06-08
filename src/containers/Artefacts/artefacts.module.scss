@@ -1,15 +1,16 @@
 .artefactsWrap {
 	padding: 32px;
 	display: flex;
+	flex-direction: column;
 	gap: 24px;
-	flex-wrap: wrap;
 	min-height: 100vh;
 }
 
-.artefactsWrap > div {
+.toolbar {
 	display: flex;
-	flex-direction: column;
-	gap: 24px;
+	align-items: center;
+	gap: 16px;
+	flex-wrap: nowrap;
 }
 
 .loadingWrap {

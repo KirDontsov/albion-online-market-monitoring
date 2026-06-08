@@ -42,6 +42,7 @@ export const DEFAULT_VALUES: ExtendedData = {
   updated_at: "",
   maxPrice: "",
   maxProfit: "",
+  source: "api",
 };
 
 export const ItemsCurtain: FC = () => {
@@ -70,19 +71,23 @@ export const ItemsCurtain: FC = () => {
 
   const handleSubmit = useCallback(() => {
     const values = getValues();
-    const now = new Date().toISOString();
+    const now = Math.floor(Date.now() / 1000).toString();
     if (isNew) {
       createItem({ ...values, created_at: now, updated_at: now });
-    } else if (isDirty) {
+    } else {
       saveItemInfo({ ...values, updated_at: now });
     }
-  }, [getValues, isDirty, saveItemInfo, createItem, isNew]);
+  }, [getValues, saveItemInfo, createItem, isNew]);
 
   const handleReset = useCallback(() => {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
   const handleCloseCurtain = useCallback(() => {
+    toggleCurtain(null);
+  }, [toggleCurtain]);
+
+  const handleEscapeCurtain = useCallback(() => {
     if (!isDirty) {
       toggleCurtain(null);
     }
@@ -91,7 +96,7 @@ export const ItemsCurtain: FC = () => {
   useEffect(handleReset, [handleReset]);
 
   useKeyPress("Enter", handleSubmit);
-  useKeyPress("Escape", handleCloseCurtain);
+  useKeyPress("Escape", handleEscapeCurtain);
 
   if (itemInfoLoading) {
     return <>Loading...</>;

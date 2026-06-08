@@ -7,3 +7,5 @@ export * from "./artefactInfo";
 
 export * from "./resources";
 export * from "./resourceInfo";
+
+export * from "./prices";
