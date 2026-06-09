@@ -10,8 +10,7 @@ import { SyncButton } from "@/components/SyncButton";
 import { useGate, useStore, useEvent } from "effector-react";
 import {
   $itemsLoading,
-  $martlockCraftItems,
-  $otherItems,
+  $allCraftItems,
   MonitoringGate,
   setSelectedItem,
 } from "@/entities";
@@ -21,8 +20,7 @@ import { filterByTiers } from "@/shared";
 
 export const Monitoring: FC = () => {
   const loading = useStore($itemsLoading);
-  const martlockCraftItems = useStore($martlockCraftItems);
-  const otherItems = useStore($otherItems);
+  const allCraftItems = useStore($allCraftItems);
   const toggleCurtain = useEvent(setSelectedItem);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
 
@@ -32,13 +30,14 @@ export const Monitoring: FC = () => {
     toggleCurtain("__new__");
   }, [toggleCurtain]);
 
-  const filteredMartlock = useMemo(
-    () => filterByTiers(martlockCraftItems ?? [], selectedTiers),
-    [martlockCraftItems, selectedTiers]
+  const filteredItems = useMemo(
+    () => filterByTiers(allCraftItems ?? [], selectedTiers),
+    [allCraftItems, selectedTiers]
   );
-  const filteredOther = useMemo(
-    () => filterByTiers(otherItems ?? [], selectedTiers),
-    [otherItems, selectedTiers]
+
+  const filteredItemIds = useMemo(
+    () => filteredItems.map((i) => i.item_id),
+    [filteredItems]
   );
 
   if (loading) {
@@ -54,17 +53,10 @@ export const Monitoring: FC = () => {
               Добавить предмет
             </Button>
             <TierFilter value={selectedTiers} onChange={setSelectedTiers} />
-            <SyncButton />
+            <SyncButton itemIds={filteredItemIds} />
           </div>
-          <div className={styles.tablesWrap}>
-            <div>
-              <h4>Martlock</h4>
-              <CollapsibleTable data={filteredMartlock} />
-            </div>
-            <div>
-              <h4>Other</h4>
-              <CollapsibleTable data={filteredOther} />
-            </div>
+          <div>
+            <CollapsibleTable data={filteredItems} />
           </div>
         </Paper>
         <ItemsCurtain />

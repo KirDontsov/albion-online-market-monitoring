@@ -45,3 +45,10 @@ export const $resourcesWithMinPrice = combine($resources, (resources) =>
     };
   }) ?? []
 );
+
+// Global resources map for SubRow price lookup
+export const $resourcesMap = combine($resources, (resources) => {
+  const map = new Map<string, ExtendedData>();
+  resources?.forEach((r) => map.set(r.item_id, r));
+  return map;
+});

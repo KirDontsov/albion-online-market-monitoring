@@ -32,6 +32,11 @@ export const Resources: FC = () => {
     [resources, selectedTiers]
   );
 
+  const filteredItemIds = useMemo(
+    () => filtered.map((i) => i.item_id),
+    [filtered]
+  );
+
   if (loading) {
     return <div className={styles.loadingWrap}>loading...</div>;
   }
@@ -45,7 +50,7 @@ export const Resources: FC = () => {
               Добавить ресурс
             </Button>
             <TierFilter value={selectedTiers} onChange={setSelectedTiers} />
-            <SyncButton />
+            <SyncButton itemIds={filteredItemIds} />
           </div>
           <div>
             <h4>Ресурсы</h4>

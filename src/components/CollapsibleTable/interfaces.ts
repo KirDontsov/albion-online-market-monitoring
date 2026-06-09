@@ -1,3 +1,8 @@
+export interface ResourceNeed {
+  item_id: string;
+  count: string;
+}
+
 export interface Data {
   label: string;
   item_id: string;
@@ -28,4 +33,5 @@ export interface ExtendedData extends Data {
   minPrice?: string;
   maxProfit?: string;
   artefact?: Data | null;
+  resources?: ResourceNeed[];
 }

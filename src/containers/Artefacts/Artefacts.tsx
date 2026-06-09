@@ -30,6 +30,11 @@ export const Artefacts: FC = () => {
     [artefactItems, selectedTiers]
   );
 
+  const filteredItemIds = useMemo(
+    () => filtered.map((i) => i.item_id),
+    [filtered]
+  );
+
   if (loading) {
     return <div className={styles.loadingWrap}>loading...</div>;
   }
@@ -43,7 +48,7 @@ export const Artefacts: FC = () => {
               Добавить артефакт
             </Button>
             <TierFilter value={selectedTiers} onChange={setSelectedTiers} />
-            <SyncButton />
+            <SyncButton itemIds={filteredItemIds} />
           </div>
           <div>
             <h4>Закупки</h4>

@@ -21,7 +21,7 @@ function formatTimestamp(ts: number | null): string {
   });
 }
 
-export const SyncButton: FC = () => {
+export const SyncButton: FC<{ itemIds?: string[] }> = ({ itemIds }) => {
   const syncStatus = useStore($syncStatus);
   const syncLoading = useStore($syncLoading);
   const sync = useEvent(syncPricesFx);
@@ -32,8 +32,8 @@ export const SyncButton: FC = () => {
   }, [fetchStatus]);
 
   const handleSync = useCallback(() => {
-    sync();
-  }, [sync]);
+    sync(itemIds);
+  }, [sync, itemIds]);
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "nowrap", whiteSpace: "nowrap" }}>

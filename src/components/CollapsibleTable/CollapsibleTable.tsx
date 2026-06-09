@@ -19,6 +19,7 @@ import {
   setSelectedArtefact,
   setSelectedItem,
 } from "@/entities";
+import { $resourcesMap } from "@/entities/resources/model";
 import styles from "./table.module.scss";
 import cn from "classnames";
 
@@ -95,24 +96,44 @@ function sortData(
 
 const SubRow = ({ row, open }: { row?: ExtendedData; open: boolean }) => {
   const artefact = row?.artefact;
+  const resources = row?.resources;
+  const resourcesMap = useStore($resourcesMap);
+
+  const resourceRows = resources?.map((r) => {
+    const resData = resourcesMap.get(r.item_id);
+    const label = resData?.label ?? r.item_id;
+    const count = Number(r.count);
+    const priceThet = Number(resData?.sell_price_thetford) || 0;
+    const priceFort = Number(resData?.sell_price_fort_sterling) || 0;
+    const priceMart = Number(resData?.sell_price_martlock) || 0;
+    const priceBrec = Number(resData?.sell_price_brecilien) || 0;
+    return { ...r, label, count, priceThet, priceFort, priceMart, priceBrec };
+  }) ?? [];
+
+  const totalThet = resourceRows.reduce((s, r) => s + r.priceThet * r.count, 0);
+  const totalFort = resourceRows.reduce((s, r) => s + r.priceFort * r.count, 0);
+  const totalMart = resourceRows.reduce((s, r) => s + r.priceMart * r.count, 0);
+  const totalBrec = resourceRows.reduce((s, r) => s + r.priceBrec * r.count, 0);
+
+  const hasResources = resourceRows.length > 0 && resourceRows.some(r => r.priceThet + r.priceFort + r.priceMart + r.priceBrec > 0);
 
   return (
     <TableRow>
       <TableCell className={styles.subRowCell} colSpan={10}>
         <Collapse in={open} timeout="auto" unmountOnExit>
           <Box className={styles.subRowBox}>
-            <Table size="small" aria-label="artefact details">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Артефакт</TableCell>
-                  <TableCell align="right">Цена Thet</TableCell>
-                  <TableCell align="right">Цена Fort</TableCell>
-                  <TableCell align="right">Цена Mart</TableCell>
-                  <TableCell align="right">Цена Brec</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {artefact ? (
+            {artefact && (
+              <Table size="small" aria-label="artefact details">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Артефакт</TableCell>
+                    <TableCell align="right">Цена Thet</TableCell>
+                    <TableCell align="right">Цена Fort</TableCell>
+                    <TableCell align="right">Цена Mart</TableCell>
+                    <TableCell align="right">Цена Brec</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
                   <TableRow sx={{ "&:hover": { background: "rgba(124,107,240,0.06)" } }}>
                     <TableCell component="th" scope="row" className={styles.subRowLabel}>
                       {artefact.label}
@@ -122,15 +143,54 @@ const SubRow = ({ row, open }: { row?: ExtendedData; open: boolean }) => {
                     <TableCell align="right">{artefact.sell_price_martlock || "—"}</TableCell>
                     <TableCell align="right">{artefact.sell_price_brecilien || "—"}</TableCell>
                   </TableRow>
-                ) : (
+                </TableBody>
+              </Table>
+            )}
+            {hasResources && (
+              <Table size="small" aria-label="crafting resources" sx={{ mt: 1 }}>
+                <TableHead>
                   <TableRow>
-                    <TableCell colSpan={5} align="center" className={styles.subRowEmpty}>
-                      Нет данных об артефакте
+                    <TableCell>Ресурс</TableCell>
+                    <TableCell align="right">Кол-во</TableCell>
+                    <TableCell align="right">Цена/шт Thet</TableCell>
+                    <TableCell align="right">Цена/шт Fort</TableCell>
+                    <TableCell align="right">Цена/шт Mart</TableCell>
+                    <TableCell align="right">Цена/шт Brec</TableCell>
+                    <TableCell align="right">Сумма Thet</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {resourceRows.filter(r => r.priceThet + r.priceFort + r.priceMart + r.priceBrec > 0).map((r) => (
+                    <TableRow key={r.item_id} sx={{ "&:hover": { background: "rgba(124,107,240,0.06)" } }}>
+                      <TableCell component="th" scope="row" className={styles.subRowLabel}>
+                        {r.label}
+                      </TableCell>
+                      <TableCell align="right">{r.count}</TableCell>
+                      <TableCell align="right">{r.priceThet || "—"}</TableCell>
+                      <TableCell align="right">{r.priceFort || "—"}</TableCell>
+                      <TableCell align="right">{r.priceMart || "—"}</TableCell>
+                      <TableCell align="right">{r.priceBrec || "—"}</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 600 }}>
+                        {r.priceThet * r.count || "—"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow>
+                    <TableCell colSpan={6} align="right" sx={{ fontWeight: 600, color: "#c0b8f8" }}>
+                      Итого:
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700, color: "#c0b8f8" }}>
+                      {totalThet || "—"}
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                </TableBody>
+              </Table>
+            )}
+            {!artefact && !hasResources && (
+              <Box sx={{ color: "#8a8ca0", fontStyle: "italic", py: 1 }}>
+                Нет данных о крафте
+              </Box>
+            )}
           </Box>
         </Collapse>
       </TableCell>

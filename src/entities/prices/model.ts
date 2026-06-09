@@ -12,8 +12,8 @@ export const $syncStatus = createStore<SyncStatus>({
 
 export const $syncLoading = createStore<boolean>(false);
 
-export const syncPricesFx = createEffect(async () => {
-  const data = await syncPrices();
+export const syncPricesFx = createEffect(async (itemIds?: string[]) => {
+  const data = await syncPrices(itemIds);
   return data;
 });
 
