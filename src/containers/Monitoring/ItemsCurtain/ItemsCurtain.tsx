@@ -15,7 +15,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { FormInput } from "@/components";
 import { Button, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { useKeyPress } from "@/shared";
+import { useKeyPress, saveScrollPosition } from "@/shared";
 import { ExtendedData } from "@/components/CollapsibleTable/interfaces";
 
 const NEW_ITEM_ID = "__new__";
@@ -43,6 +43,8 @@ export const DEFAULT_VALUES: ExtendedData = {
   maxPrice: "",
   maxProfit: "",
   source: "api",
+  comment: "",
+  popularity: "0",
 };
 
 export const ItemsCurtain: FC = () => {
@@ -70,6 +72,7 @@ export const ItemsCurtain: FC = () => {
   const { isDirty, isValid } = formState;
 
   const handleSubmit = useCallback(() => {
+    saveScrollPosition();
     const values = getValues();
     const now = Math.floor(Date.now() / 1000).toString();
     if (isNew) {
@@ -132,41 +135,60 @@ export const ItemsCurtain: FC = () => {
                 name="sell_price_thetford"
                 label="Цена Thetford"
                 required
+                autoFocus
+                numeric
               />
               <FormInput
                 name="sell_price_fort_sterling"
                 label="Цена Fort Sterling"
                 required
+                numeric
               />
               <FormInput
                 name="sell_price_martlock"
                 label="Цена Martlock"
                 required
+                numeric
               />
               <FormInput
                 name="sell_price_brecilien"
                 label="Цена Brecilien"
                 required
+                numeric
               />
               <FormInput
                 name="orders_thetford"
                 label="Заказы Thetford"
                 required
+                numeric
               />
               <FormInput
                 name="orders_fort_sterling"
                 label="Заказы Fort Sterling"
                 required
+                numeric
               />
               <FormInput
                 name="orders_martlock"
                 label="Заказы Martlock"
                 required
+                numeric
               />
               <FormInput
                 name="orders_brecilien"
                 label="Заказы Brecilien"
                 required
+                numeric
+              />
+              <FormInput
+                name="popularity"
+                label="Популярность (0–5)"
+                numeric
+              />
+              <FormInput
+                name="comment"
+                label="Комментарий"
+                multi
               />
             </Stack>
             <Button

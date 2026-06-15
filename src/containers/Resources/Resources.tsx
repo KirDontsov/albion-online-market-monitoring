@@ -1,5 +1,5 @@
 "use client";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useEffect } from "react";
 import { CollapsibleTable } from "@/components/CollapsibleTable";
 import { TierFilter } from "@/components/TierFilter";
 import { MuiThemeProvider } from "@/context";
@@ -13,13 +13,24 @@ import { Layout } from "@/containers/Layout";
 import { ResourcesCurtain } from "./ResourcesCurtain";
 import { SyncButton } from "@/components/SyncButton";
 import { Button } from "@mui/material";
-import { filterByTiers } from "@/shared";
+import { filterByTiers, restoreScrollPosition, usePersistedState } from "@/shared";
 
 export const Resources: FC = () => {
   const loading = useStore($resourcesLoading);
   const resources = useStore($resourcesWithMinPrice);
   const toggleCurtain = useEvent(setSelectedResource);
-  const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
+  const [selectedTiers, setSelectedTiers] = usePersistedState<string[]>(
+    "albion_resources_tiers",
+    []
+  );
+  const prevDataRef = useRef(resources);
+
+  useEffect(() => {
+    if (prevDataRef.current !== resources) {
+      restoreScrollPosition();
+      prevDataRef.current = resources;
+    }
+  }, [resources]);
 
   useGate(ResourcesGate);
 
@@ -54,7 +65,7 @@ export const Resources: FC = () => {
           </div>
           <div>
             <h4>Ресурсы</h4>
-            <CollapsibleTable data={filtered} artefacts />
+            <CollapsibleTable data={filtered} artefacts storageKey="albion_resources" />
           </div>
         </Paper>
         <ResourcesCurtain />

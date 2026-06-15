@@ -2,7 +2,10 @@ import { createGate } from "effector-react";
 import { combine, createEffect, createStore, forward, sample } from "effector";
 import { getItems, getArtefacts } from "@/shared/api";
 import type { ExtendedData } from "@/components/CollapsibleTable/interfaces";
-import { fetchResourcesFx } from "@/entities/resources/model";
+import { fetchResourcesFx, $resourcesMap } from "@/entities/resources/model";
+
+const CITIES = ["thetford", "fort_sterling", "martlock", "brecilien"] as const;
+const TAX_RATE = 10.5;
 
 export const $items = createStore<ExtendedData[] | null>([]);
 export const $itemsLoading = createStore<boolean>(false);
@@ -42,73 +45,64 @@ sample({
   target: $itemsLoading,
 });
 
-function enrichItem(cur: ExtendedData) {
-  const artefactPrice = cur.artefact
-    ? [
-        Number(cur.artefact.sell_price_thetford),
-        Number(cur.artefact.sell_price_fort_sterling),
-        Number(cur.artefact.sell_price_martlock),
-      ].reduce((acc, next) => acc + next, 0) / 3
+function getCityCost(
+  item: ExtendedData,
+  city: (typeof CITIES)[number],
+  resourcesMap: Map<string, ExtendedData>
+): number {
+  const artefactField = `sell_price_${city}` as keyof ExtendedData;
+  const artefactCost = item.artefact
+    ? Number((item.artefact as unknown as Record<string, unknown>)[artefactField]) || 0
     : 0;
-  const craftPrice = Math.floor(
-    artefactPrice + Number(cur.craft_price)
-  ).toString();
+
+  let resourceCost = 0;
+  if (item.resources) {
+    for (const r of item.resources) {
+      const resData = resourcesMap.get(r.item_id);
+      if (resData) {
+        const price = Number(resData[`sell_price_${city}` as keyof ExtendedData]) || 0;
+        resourceCost += price * Number(r.count);
+      }
+    }
+  }
+
+  return artefactCost + resourceCost;
+}
+
+function enrichItem(cur: ExtendedData, resourcesMap: Map<string, ExtendedData>) {
+  const costs = CITIES.map((city) => ({
+    city,
+    total: getCityCost(cur, city, resourcesMap),
+  }));
+
+  const profitPerCity = costs.map(({ city, total }) => {
+    const sell = Number(cur[`sell_price_${city}` as keyof ExtendedData]) || 0;
+    const tax = Math.floor((sell / 100) * TAX_RATE);
+    return { city, profit: Math.floor(sell - total - tax) };
+  });
+
+  const profits = profitPerCity.map((p) => p.profit);
+  const maxProfit = Math.max(...profits);
+  const maxPrice = Math.max(
+    ...CITIES.map((city) => Number(cur[`sell_price_${city}` as keyof ExtendedData]) || 0)
+  );
+
   return {
     ...cur,
-    maxPrice: Math.max(
-      ...[
-        Number(cur.sell_price_thetford),
-        Number(cur.sell_price_fort_sterling),
-        Number(cur.sell_price_martlock),
-      ]
-    ).toString(),
-    maxProfit: !/@/.test(cur.item_id)
-      ? Math.max(
-          ...[
-            Math.floor(
-              Number(cur.sell_price_thetford) -
-                Number(craftPrice) -
-                (Number(cur.sell_price_thetford) / 100) * 10.5
-            ),
-            Math.floor(
-              Number(cur.sell_price_fort_sterling) -
-                Number(craftPrice) -
-                (Number(cur.sell_price_fort_sterling) / 100) * 10.5
-            ),
-            Math.floor(
-              Number(cur.sell_price_martlock) -
-                Number(craftPrice) -
-                (Number(cur.sell_price_martlock) / 100) * 10.5
-            ),
-          ]
-        ).toString()
-      : Math.max(
-          ...[
-            Math.floor(
-              Number(cur.sell_price_thetford) -
-                Number(cur.enchantment_price) -
-                (Number(cur.sell_price_thetford) / 100) * 10.5
-            ),
-            Math.floor(
-              Number(cur.sell_price_fort_sterling) -
-                Number(cur.enchantment_price) -
-                (Number(cur.sell_price_fort_sterling) / 100) * 10.5
-            ),
-            Math.floor(
-              Number(cur.sell_price_martlock) -
-                Number(cur.enchantment_price) -
-                (Number(cur.sell_price_martlock) / 100) * 10.5
-            ),
-          ]
-        ).toString(),
-    craft_price: craftPrice,
+    maxPrice: maxPrice.toString(),
+    maxProfit: maxProfit.toString(),
+    profit_thetford: profitPerCity.find((p) => p.city === "thetford")!.profit.toString(),
+    profit_fort_sterling: profitPerCity.find((p) => p.city === "fort_sterling")!.profit.toString(),
+    profit_martlock: profitPerCity.find((p) => p.city === "martlock")!.profit.toString(),
+    profit_brecilien: profitPerCity.find((p) => p.city === "brecilien")!.profit.toString(),
+    craft_price: costs.find((c) => c.city === "thetford")!.total.toString(),
   };
 }
 
-export const $allCraftItems = combine($items, (items) =>
+export const $allCraftItems = combine($items, $resourcesMap, (items, resourcesMap) =>
   items?.reduce((acc: ExtendedData[], cur) => {
     if (/OFF|2H|MAIN/.test(cur.item_id)) {
-      acc.push(enrichItem(cur));
+      acc.push(enrichItem(cur, resourcesMap));
     }
     return acc;
   }, [])

@@ -1,5 +1,5 @@
 "use client";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useEffect } from "react";
 import { CollapsibleTable } from "@/components/CollapsibleTable";
 import { TierFilter } from "@/components/TierFilter";
 import { MuiThemeProvider } from "@/context";
@@ -16,13 +16,24 @@ import {
 } from "@/entities";
 import { Button } from "@mui/material";
 import { Layout } from "@/containers/Layout";
-import { filterByTiers } from "@/shared";
+import { filterByTiers, restoreScrollPosition, usePersistedState } from "@/shared";
 
 export const Monitoring: FC = () => {
   const loading = useStore($itemsLoading);
   const allCraftItems = useStore($allCraftItems);
   const toggleCurtain = useEvent(setSelectedItem);
-  const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
+  const [selectedTiers, setSelectedTiers] = usePersistedState<string[]>(
+    "albion_monitoring_tiers",
+    []
+  );
+  const prevDataRef = useRef(allCraftItems);
+
+  useEffect(() => {
+    if (prevDataRef.current !== allCraftItems) {
+      restoreScrollPosition();
+      prevDataRef.current = allCraftItems;
+    }
+  }, [allCraftItems]);
 
   useGate(MonitoringGate);
 
@@ -56,7 +67,7 @@ export const Monitoring: FC = () => {
             <SyncButton itemIds={filteredItemIds} />
           </div>
           <div>
-            <CollapsibleTable data={filteredItems} />
+            <CollapsibleTable data={filteredItems} storageKey="albion_monitoring" />
           </div>
         </Paper>
         <ItemsCurtain />

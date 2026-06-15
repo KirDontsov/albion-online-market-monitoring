@@ -23,7 +23,10 @@ export interface Data {
   orders_brecilien: string;
   created_at: string;
   updated_at: string;
+  resources?: ResourceNeed[];
   source: string;
+  comment?: string;
+  popularity?: string;
 }
 
 export interface ExtendedData extends Data {
@@ -32,6 +35,9 @@ export interface ExtendedData extends Data {
   maxPrice?: string;
   minPrice?: string;
   maxProfit?: string;
+  profit_thetford?: string;
+  profit_fort_sterling?: string;
+  profit_martlock?: string;
+  profit_brecilien?: string;
   artefact?: Data | null;
-  resources?: ResourceNeed[];
 }

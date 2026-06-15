@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState, CSSProperties } from "react";
+import { FC, useCallback, useMemo, useState, useRef, useEffect, CSSProperties } from "react";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -27,6 +27,7 @@ type SortKey =
   | "label"
   | "item_id"
   | "tier"
+  | "popularity"
   | "sell_price_thetford"
   | "sell_price_fort_sterling"
   | "sell_price_martlock"
@@ -44,11 +45,13 @@ const getTier = (item_id: string) => {
 };
 
 const getProfit = (row: ExtendedData, city: "thetford" | "fort_sterling" | "martlock" | "brecilien") => {
-  const sell = Number(row[`sell_price_${city}` as keyof ExtendedData]);
-  const base = !/@/.test(row.item_id)
-    ? Number(row.craft_price)
-    : Number(row.enchantment_price);
-  return Math.floor(sell - base - (sell / 100) * 10.5);
+  return Number(row[`profit_${city}` as keyof ExtendedData]) || 0;
+};
+
+const renderStars = (popularity?: string) => {
+  const n = Number(popularity) || 0;
+  const clamped = Math.max(0, Math.min(5, n));
+  return "★".repeat(clamped) + "☆".repeat(5 - clamped);
 };
 
 function sortData(
@@ -56,11 +59,20 @@ function sortData(
   sortKey: SortKey | null,
   sortDir: SortDir
 ): ExtendedData[] {
-  if (!sortKey) return data;
   return [...data].sort((a, b) => {
+    const popA = Number(a.popularity) || 0;
+    const popB = Number(b.popularity) || 0;
+    if (popA !== popB) return popB - popA;
+
+    if (!sortKey) return 0;
+
     let av: string | number;
     let bv: string | number;
     switch (sortKey) {
+      case "popularity":
+        av = Number(a.popularity) || 0;
+        bv = Number(b.popularity) || 0;
+        break;
       case "tier":
         av = getTier(a.item_id);
         bv = getTier(b.item_id);
@@ -115,11 +127,11 @@ const SubRow = ({ row, open }: { row?: ExtendedData; open: boolean }) => {
   const totalMart = resourceRows.reduce((s, r) => s + r.priceMart * r.count, 0);
   const totalBrec = resourceRows.reduce((s, r) => s + r.priceBrec * r.count, 0);
 
-  const hasResources = resourceRows.length > 0 && resourceRows.some(r => r.priceThet + r.priceFort + r.priceMart + r.priceBrec > 0);
+  const hasResources = resourceRows.length > 0;
 
   return (
     <TableRow>
-      <TableCell className={styles.subRowCell} colSpan={10}>
+      <TableCell className={styles.subRowCell} colSpan={14}>
         <Collapse in={open} timeout="auto" unmountOnExit>
           <Box className={styles.subRowBox}>
             {artefact && (
@@ -160,7 +172,7 @@ const SubRow = ({ row, open }: { row?: ExtendedData; open: boolean }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {resourceRows.filter(r => r.priceThet + r.priceFort + r.priceMart + r.priceBrec > 0).map((r) => (
+                  {resourceRows.map((r) => (
                     <TableRow key={r.item_id} sx={{ "&:hover": { background: "rgba(124,107,240,0.06)" } }}>
                       <TableCell component="th" scope="row" className={styles.subRowLabel}>
                         {r.label}
@@ -333,6 +345,13 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false, expandable = 
         >
           {row.label.split(" (знаток)")[0]}
         </TableCell>
+        <TableCell
+          align="center"
+          onClick={() => handleOpenCurtain(row.item_id)}
+          sx={{ fontSize: "0.85rem", letterSpacing: "0.05em", color: "#e8b830", minWidth: 60 }}
+        >
+          {renderStars(row.popularity)}
+        </TableCell>
         {simple && (
           <TableCell
             align="right"
@@ -461,7 +480,6 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false, expandable = 
               </>
             )}
             <TableCell
-              className={styles.lastCell}
               onClick={() => handleOpenCurtain(row.item_id)}
               align="right"
               sx={{ fontSize: "0.8rem", color: "#8a8ca0", lineHeight: 1.4 }}
@@ -479,6 +497,21 @@ export const Row: FC<RowProps> = ({ row, index, artefacts = false, expandable = 
                 <p>{`Brec: ${row.orders_brecilien}`}</p>
               )}
             </TableCell>
+            <TableCell
+              className={styles.lastCell}
+              onClick={() => handleOpenCurtain(row.item_id)}
+              align="left"
+              sx={{
+                fontSize: "0.75rem",
+                color: "#8a8ca0",
+                maxWidth: 160,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {row.comment || ""}
+            </TableCell>
           </>
         )}
       </TableRow>
@@ -492,6 +525,7 @@ export interface CollapsibleTableProps {
   artefacts?: boolean;
   expandable?: boolean;
   simple?: boolean;
+  storageKey?: string;
 }
 
 interface SortableHeadProps {
@@ -528,6 +562,7 @@ const SortableHead: FC<SortableHeadProps> = ({
       <TableRow className={styles.headRow}>
         {expandable && <TableCell />}
         {th("label", "Предмет", "left")}
+        {th("popularity", "★")}
         {simple && th("item_id", "ID")}
         {!simple && th("tier", "Тир")}
         {!simple && (
@@ -547,10 +582,13 @@ const SortableHead: FC<SortableHeadProps> = ({
           </>
         )}
         {!simple && (
-          <TableCell className={styles.lastHeadCell} align="right">
+          <TableCell align="right">
             Заказы
           </TableCell>
         )}
+        <TableCell align="left" sx={{ fontSize: "0.75rem", color: "#8a8ca0" }}>
+          Комментарий
+        </TableCell>
       </TableRow>
     </TableHead>
   );
@@ -561,9 +599,37 @@ export const CollapsibleTable: FC<CollapsibleTableProps> = ({
   artefacts = false,
   expandable = true,
   simple = false,
+  storageKey,
 }) => {
-  const [sortKey, setSortKey] = useState<SortKey | null>(null);
-  const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [sortKey, setSortKey] = useState<SortKey | null>(() => {
+    if (!storageKey) return null;
+    try {
+      const saved = localStorage.getItem(`${storageKey}_sort_key`);
+      return saved ? (JSON.parse(saved) as SortKey) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [sortDir, setSortDir] = useState<SortDir>(() => {
+    if (!storageKey) return "asc";
+    try {
+      const saved = localStorage.getItem(`${storageKey}_sort_dir`);
+      return saved ? (JSON.parse(saved) as SortDir) : "asc";
+    } catch {
+      return "asc";
+    }
+  });
+  const isInitialMount = useRef(true);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    if (!storageKey) return;
+    localStorage.setItem(`${storageKey}_sort_key`, JSON.stringify(sortKey));
+    localStorage.setItem(`${storageKey}_sort_dir`, JSON.stringify(sortDir));
+  }, [storageKey, sortKey, sortDir]);
 
   const handleSort = useCallback(
     (key: SortKey) => {
